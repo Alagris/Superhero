@@ -52,13 +52,6 @@ void AIndoorsPawn::Move(const FInputActionValue& Value)
 	}
 }
 
-void AIndoorsPawn::LeftClick(const FInputActionValue& Value)
-{
-}
-
-void AIndoorsPawn::RightClick(const FInputActionValue& Value)
-{
-}
 
 void AIndoorsPawn::OnPossessed(AIndoorsPlayerController* c)
 {

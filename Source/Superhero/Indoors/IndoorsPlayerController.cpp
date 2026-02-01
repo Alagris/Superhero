@@ -4,6 +4,7 @@
 #include "Indoors/IndoorsPlayerController.h"
 #include "Indoors/IndoorsPawn.h"
 #include <EnhancedInputComponent.h>
+#include "Common/Interactable.h"
 #include <EnhancedInputSubsystems.h>
 
 AIndoorsPlayerController::AIndoorsPlayerController() {
@@ -92,7 +93,7 @@ void AIndoorsPlayerController::SetPawn(APawn* InPawn)
 	if (GameCharacter) {
 		GameCharacter->OnPossessed(this);
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent)) {
-			EnhancedInputComponent->BindAction(LeftClick, ETriggerEvent::Triggered, GameCharacter, &AIndoorsPawn::LeftClick);
+			EnhancedInputComponent->BindAction(LeftClick, ETriggerEvent::Started, this, &AIndoorsPlayerController::OnLeftClick);
 			EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Started, this, &AIndoorsPlayerController::StartRightClick);
 			EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Completed, this, &AIndoorsPlayerController::EndRightClick);
 			// Moving
@@ -127,6 +128,20 @@ void AIndoorsPlayerController::Look(const FInputActionValue& Value)
 		{
 			AddPitchInput(LookAxisVector.Y);
 		}
+	}
+}
+
+void AIndoorsPlayerController::OnLeftClick(const FInputActionValue& Value)
+{
+	if (bShowMouseCursor) {
+		FHitResult hit;
+		if (GetHitResultUnderCursor(ECC_Visibility, true, hit)) {
+			AActor * a = hit.GetActor();
+			if (a!=nullptr && a->Implements<UInteractable>()) {
+				IInteractable::Execute_Interact(a);
+			}
+		}
+		
 	}
 }
 

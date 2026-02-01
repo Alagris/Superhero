@@ -9,6 +9,11 @@
 
 class AIndoorsPlayerController;
 
+struct Ray {
+	FVector start, end;
+};
+
+
 UCLASS()
 class SUPERHERO_API AIndoorsPawn : public APawn
 {
@@ -36,9 +41,7 @@ public:
 	
 	void Move(const FInputActionValue& Value);
 
-	void LeftClick(const FInputActionValue& Value);
-
-	void RightClick(const FInputActionValue& Value);
 
 	void OnPossessed(AIndoorsPlayerController* c);
+
 };

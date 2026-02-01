@@ -40,6 +40,7 @@ class SUPERHERO_API AIndoorsPlayerController : public APlayerController
 
 	void Look(const FInputActionValue& Value);
 
+	void OnLeftClick(const FInputActionValue& Value);
 	void StartRightClick(const FInputActionValue& Value) {
 		isHoldingRMB = true;
 		SetShowMouseCursor(false);
