@@ -1,0 +1,70 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerController.h"
+#include <EnhancedInputSubsystemInterface.h>
+#include <InputMappingContext.h>
+#include "IndoorsPlayerController.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class SUPERHERO_API AIndoorsPlayerController : public APlayerController
+{
+	GENERATED_BODY()
+
+	/** Constructor */
+	AIndoorsPlayerController();
+
+	UInputAction* MapKey(UInputMappingContext* ctx, FKey key, EInputActionValueType type = EInputActionValueType::Boolean, bool triggerWhenPaused = false);
+	UInputAction* MapTapKey(UInputMappingContext* ctx, FKey key, float timeThreshold);
+//	UInputAction* MapTapOrHoldKey(UInputMappingContext* ctx, FKey key, float timeThreshold);
+//	UInputAction* MapHoldThenOngoingKey(UInputMappingContext* ctx, FKey key, float timeThreshold);
+//	UInputAction* MapHoldKey(UInputMappingContext* ctx, FKey key, float timeThreshold);
+
+	void MapKey(UInputMappingContext* ctx, UInputAction* act, FKey key, bool negateX, bool negateY, bool negateZ);
+	void MapKey(UInputMappingContext* ctx, UInputAction* act, FKey key, bool negate = false, bool swizzle = false, EInputAxisSwizzle order = EInputAxisSwizzle::YXZ);
+
+	/** Initialize input bindings */
+	virtual void SetupInputComponent() override;
+
+	/** Pawn initialization */
+	virtual void OnPossess(APawn* InPawn) override;
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+	void SetMapping(UInputMappingContext* ctx);
+
+	void Look(const FInputActionValue& Value);
+
+	void StartRightClick(const FInputActionValue& Value) {
+		isHoldingRMB = true;
+		SetShowMouseCursor(false);
+	}
+	void EndRightClick(const FInputActionValue& Value) {
+		isHoldingRMB = false;
+		SetShowMouseCursor(true);
+	}
+	bool isHoldingRMB=false;
+	/** MappingContext */
+	UPROPERTY()
+	UInputMappingContext* DefaultMappingContext;
+	
+	UPROPERTY()
+	UInputAction* MoveAction;
+
+	UPROPERTY()
+	UInputAction* LookAction;
+
+	UPROPERTY()
+	UInputAction* RightClick;
+
+	UPROPERTY()
+	UInputAction* LeftClick;
+public:
+
+	class AIndoorsPawn* GameCharacter;
+};
