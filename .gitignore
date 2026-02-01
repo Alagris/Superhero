@@ -2,7 +2,9 @@ Binaries
 DerivedDataCache
 Intermediate
 Saved
-Content/HeavyAssets
+Content
+!Content/Characters
+!Content/Indoor/Blueprints
 .vscode
 .vs
 *.VC.db

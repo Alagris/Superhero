@@ -1,0 +1,3 @@
+[submodule "Content/HeavyAssets"]
+	path = Content/HeavyAssets
+	url = git@github.com:Alagris/SuperheroAssets.git
