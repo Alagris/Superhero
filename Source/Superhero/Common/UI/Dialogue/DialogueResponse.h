@@ -15,11 +15,11 @@ class SUPERHERO_API UDialogueResponse : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString PlayerText;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<UDialogueStage> Next;
 
 	UFUNCTION(BlueprintNativeEvent, Category = "Dialogue")

@@ -1,0 +1,36 @@
+--
+    - I want to learn sword fighting
+      Hi, I am looking to learn sword fighting. Is there anyone who I could teach me?
+--
+    Sure, there are a lot of sword fighters, what type of sword fighting do you want to learn?
+    - I want something fast and precise.
+--
+    I would really love to find someone who focuses on that type of sword fighting. I am really sorry.
+    #   pauses, as if thinking… then lowers their voice
+    Actually, there is a lady who specializes in sword fighting that you are looking for
+    - Really? Can you tell me who she is?
+--
+    Yes, her name is Alice, if you want to know where she is located, you'll know when you'll find cherry blossoms. She actually is located on the other side, you will know when you see the cherry blossom in it's full bloom.
+    - Thank you, I am going to look for her ==> !:SET_STAGE MIZUKI FOUND_ALICE
+FOUND_ALICE
+    Hey there sweet traveller what brings you here from far? Enjoying the scene or did you come to seek and destroy me?
+    - I am here to learn sword fighting
+        --
+            Learning sword fighting
+            # giggles
+            I am happy to guide you, let me plant some water on the trees and meet at the waterfall.
+    - You look very beautiful
+        --
+            Thank you very much sweety, it makes me happy when somebody recognizes my beauty, I haven't heard those words for a very long time.
+            - The pleasure is mine
+        --
+            I will take that as a complement. I have some questions for you, did you came for a chit chat, I would love to talk to you.
+            Did somebody tell you where I was?
+            - I'm here just to learn
+              Yes, but I just came to learn sword fighting. I discovered you where here because I asked a stranger for advice and she recommended to meet you.
+        --
+            I see, alright, meet me at the waterfall and we will discuss how we will start the training.
+    - Nice... you look fine for a woman like you
+        --
+            Oh, uh... thank you, do you need something, I'm a bit busy now.
+
