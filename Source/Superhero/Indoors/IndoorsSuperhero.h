@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ISpudObject.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "IndoorsSuperhero.generated.h"
 
 UCLASS()
-class SUPERHERO_API AIndoorsSuperhero : public ACharacter
+class SUPERHERO_API AIndoorsSuperhero : public ACharacter, public ISpudObject
 {
 	GENERATED_BODY()
 

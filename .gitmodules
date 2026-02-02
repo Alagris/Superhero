@@ -1,3 +1,6 @@
 [submodule "Content/HeavyAssets"]
 	path = Content/HeavyAssets
 	url = git@github.com:Alagris/SuperheroAssets.git
+[submodule "Plugins/SPUD"]
+	path = Plugins/SPUD
+	url = https://github.com/sinbad/SPUD

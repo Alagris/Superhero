@@ -5,7 +5,10 @@
 #include "Indoors/IndoorsPawn.h"
 #include <EnhancedInputComponent.h>
 #include "Common/Interactable.h"
+#include "Common/UI/Dialogue/DialogueActor.h"
+#include "Common/UI/Dialogue/DialogueStage.h"
 #include <EnhancedInputSubsystems.h>
+#include <Common/UI/GameHUD.h>
 
 AIndoorsPlayerController::AIndoorsPlayerController() {
 	bShowMouseCursor = true;
@@ -73,11 +76,10 @@ void AIndoorsPlayerController::SetupInputComponent()
 	MapKey(DefaultMappingContext, MoveAction, EKeys::SpaceBar, false, true, EInputAxisSwizzle::ZYX);
 	MapKey(DefaultMappingContext, MoveAction, EKeys::LeftControl, true, true, EInputAxisSwizzle::ZYX);
 
-
-
 	MapKey(DefaultMappingContext, LookAction, EKeys::Mouse2D, false, true, false);
 	LeftClick = MapKey(DefaultMappingContext, EKeys::LeftMouseButton);
 	RightClick = MapKey(DefaultMappingContext, EKeys::RightMouseButton);
+	PauseGameAction = MapKey(DefaultMappingContext, EKeys::Escape, EInputActionValueType::Boolean, true);
 	SetMapping(DefaultMappingContext);
 }
 
@@ -101,6 +103,7 @@ void AIndoorsPlayerController::SetPawn(APawn* InPawn)
 
 			// Looking
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AIndoorsPlayerController::Look);
+			EnhancedInputComponent->BindAction(PauseGameAction, ETriggerEvent::Started, this, &AIndoorsPlayerController::OnTriggerPauseGame);
 		}
 	}
 
@@ -143,6 +146,45 @@ void AIndoorsPlayerController::OnLeftClick(const FInputActionValue& Value)
 		}
 		
 	}
+}
+
+void AIndoorsPlayerController::TriggerPauseGame()
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		hud->triggerPauseGame(this);
+	}	
+}
+
+bool AIndoorsPlayerController::PauseGame()
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		return hud->showPauseMenu(this);
+	}
+	return false;
+}
+
+bool AIndoorsPlayerController::UnpauseGame()
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		return hud->hidePauseMenu(this);
+	}
+	return false;
+}
+
+bool AIndoorsPlayerController::OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		hud->showDialogue(PlayerController, Npc, Stage);
+	}
+	return false;
+
+}
+bool AIndoorsPlayerController::CloseDialogue()
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		return hud->hideDialogue(this);		
+	}
+	return false;
 }
 
 

@@ -1,10 +1,24 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+using System.IO;
 using UnrealBuildTool;
 
 public class Superhero : ModuleRules
 {
-	public Superhero(ReadOnlyTargetRules Target) : base(Target)
+    private string PluginsPath
+    {
+        get { return Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Plugins/")); }
+    }
+
+    protected void AddSPUD()
+    {
+        // Linker
+        PrivateDependencyModuleNames.AddRange(new string[] { "SPUD" });
+        // Headers
+        PublicIncludePaths.Add(Path.Combine(PluginsPath, "SPUD", "Source", "SPUD", "Public"));
+    }
+
+    public Superhero(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
@@ -20,7 +34,8 @@ public class Superhero : ModuleRules
 			"GameplayStateTreeModule",
 			"Niagara",
 			"UMG",
-			"Slate"
+            "SlateCore",
+            "Slate",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { });
@@ -35,12 +50,13 @@ public class Superhero : ModuleRules
 			"Superhero/Variant_TwinStick/UI"
 		});
 
-		// Uncomment if you are using Slate UI
-		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+        AddSPUD();
+        // Uncomment if you are using Slate UI
+        // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 
-		// Uncomment if you are using online features
-		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
+        // Uncomment if you are using online features
+        // PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
-		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
-	}
+        // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+    }
 }

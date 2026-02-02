@@ -6,13 +6,16 @@
 #include "GameFramework/PlayerController.h"
 #include <EnhancedInputSubsystemInterface.h>
 #include <InputMappingContext.h>
+#include "ISpudObject.h"
 #include "IndoorsPlayerController.generated.h"
 
+class IDialogueActor;
+class UDialogueStage;
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API AIndoorsPlayerController : public APlayerController
+class SUPERHERO_API AIndoorsPlayerController : public APlayerController, public ISpudObject
 {
 	GENERATED_BODY()
 
@@ -65,7 +68,24 @@ class SUPERHERO_API AIndoorsPlayerController : public APlayerController
 
 	UPROPERTY()
 	UInputAction* LeftClick;
+
+	UPROPERTY()
+	UInputAction* PauseGameAction;
+
+
+	void OnTriggerPauseGame(const FInputActionValue& Value) {
+		TriggerPauseGame();
+	}
 public:
 
 	class AIndoorsPawn* GameCharacter;
+
+
+	void TriggerPauseGame();
+	bool PauseGame();
+	bool UnpauseGame();
+	bool CloseDialogue();
+	bool OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
+
+	
 };

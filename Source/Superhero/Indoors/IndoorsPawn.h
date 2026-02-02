@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "ISpudObject.h"
 #include <EnhancedInputLibrary.h>
 #include "IndoorsPawn.generated.h"
 
@@ -15,7 +16,7 @@ struct Ray {
 
 
 UCLASS()
-class SUPERHERO_API AIndoorsPawn : public APawn
+class SUPERHERO_API AIndoorsPawn : public APawn, public ISpudObject
 {
 	GENERATED_BODY()
 
