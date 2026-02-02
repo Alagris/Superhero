@@ -78,7 +78,7 @@ It is possible to trigger various functions when user chooses a dialogue option.
 ```
 --
     Hello
-    - Hi :function1
+    - Hi ==>:function1
         --
             What's your name?
     - Bye 
@@ -92,7 +92,7 @@ and can be implemented in blueprints or written directly in text
 ```
 --
     Hello
-    - Hi ?conditionFunction1
+    - Hi ==>?conditionFunction1
         --
             What's your name?
     - Bye 
