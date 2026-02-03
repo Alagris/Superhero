@@ -26,7 +26,7 @@ ASuperheroCharacter::ASuperheroCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->bSnapToPlaneAtStart = true;
-
+	
 	// Create the camera boom component
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 
@@ -45,12 +45,15 @@ ASuperheroCharacter::ASuperheroCharacter()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	
+	
 }
 
 void ASuperheroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	// stub
 }
 
