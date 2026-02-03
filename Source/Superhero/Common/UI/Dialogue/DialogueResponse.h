@@ -16,7 +16,7 @@ class SUPERHERO_API UDialogueResponse : public UPrimaryDataAsset
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString PlayerText;
+	FText PlayerText;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -19,7 +19,7 @@ void UDialogueOption::NativeOnListItemObjectSet(UObject* ListItemObject)
 	Parent = Cast<UDialogueResponseListView>(owner);
 	check(Parent != nullptr);
 	DialogueResponse = Cast<UDialogueResponse>(ListItemObject);
-	TextOption->SetText(FText::FromString(DialogueResponse->PlayerText));
+	TextOption->SetText(DialogueResponse->PlayerText);
 }
 
 void UDialogueOption::OnOptionClick()

@@ -502,7 +502,7 @@ class Converter:
                 print("    " + stage.text.replace("\n", "\\n"))
                 for resp in stage.responses:
                     next_stage = "!" if resp.next_stage is None else resp.next_stage.fullname()
-                    print(f"    - {resp.short} ==> {next_stage}:{resp.side_effects}")
+                    print(f"    - {resp.short} ==> {next_stage}:{resp.side_effects}?{resp.condition}")
                     print("      " + resp.long.replace("\n", "\\n"))
 
     def full_parse(self, content_dir, pre_content_dir):
@@ -527,15 +527,29 @@ class Converter:
         self.unparse_all()
         self.convert_to_ue5()
 
-    def make_ue5_resp(self, resp: Resp, resp_type):
+    def make_or_create(self, asset_name, package_path, asset_class):
+        import unreal
+        p = package_path+"/"+asset_name
+        if unreal.EditorAssetLibrary.does_asset_exist(p):
+            return unreal.EditorAssetLibrary.load_asset(p)
+        else:
+            return self.asset_tools.create_asset(
+                asset_name,
+                package_path,
+                asset_class,
+                self.asset_factory
+            )
+
+    def make_ue5_resp(self, resp: Resp):
+        import unreal
         resp_name = "RESP_" + resp.file_name + "_" + resp.name
         print("Creating", resp_name)
-        return self.asset_tools.create_asset(
-            resp_name,
-            "/Game/Dialogue/Responses",
-            resp_type,
-            self.asset_factory
-        )
+        return self.make_or_create(resp_name, "/Game/Dialogue/Responses", unreal.DialogueResponse)
+
+    def make_ue5_stage(self, stage: Stage):
+        import unreal
+        stage_name = "STG_" + stage.file_name + "_" + stage.name
+        return self.make_or_create(stage_name, "/Game/Dialogue/Stages", unreal.DialogueStage)
 
     def convert_to_ue5(self):
         import unreal
@@ -543,32 +557,25 @@ class Converter:
         self.asset_factory = unreal.DataAssetFactory()
         for resps in self.resps.values():
             for resp in resps.values():
-                if len(resp.side_effects) == 0 or (len(resp.side_effects) == 1 and resp.side_effects[0].pure):
-                    resp.ue5 = self.make_ue5_resp(resp, unreal.DialogueResponse)
-                    resp.ue5.short = unreal.Text(resp.short)
-                    resp.ue5.long = unreal.Text(resp.long)
-                    if len(resp.side_effects) == 1:
-                        resp.ue5.set_pure_side_effect_by_name(resp.side_effects[0].type)
-                elif len(resp.side_effects) == 1:
-                    resp.side_effects[0].to_ue5(self, resp)
+                resp.ue5 = self.make_ue5_resp(resp)
+                if resp.ue5 is None:
+                    print("ERROR:", resp.file_name, resp.name, "failed creating")
+                resp.ue5.player_text = unreal.Text(resp.short)
         for stages in self.stages.values():
             for stage in stages.values():
-                stage_name = "STG_" + stage.file_name + "_" + stage.name
-                stage.ue5 = self.asset_tools.create_asset(
-                    stage_name,
-                    "/Game/Dialogue/Stages",
-                    unreal.DialogueStage,
-                    self.asset_factory
-                )
-                stage.ue5.text = stage.text
+                stage.ue5 = self.make_ue5_stage(stage)
+                stage.ue5.npc_text = unreal.Text(stage.text)
                 stage.ue5.responses = [r.ue5 for r in stage.responses]
                 if stage.anim is not None:
                     anim = self.anims[stage.anim].load()
                     stage.ue5.animation = anim
         for resps in self.resps.values():
             for resp in resps.values():
+                assert isinstance(resp, Resp)
                 if resp.next_stage is not None:
-                    resp.ue5.next = resp.next_stage
+                    assert isinstance(resp.next_stage, Stage)
+                    assert resp.next_stage.ue5 is not None
+                    resp.ue5.next = resp.next_stage.ue5
                 unreal.EditorAssetLibrary.save_loaded_asset(resp.ue5)
         for stages in self.stages.values():
             for stage in stages.values():

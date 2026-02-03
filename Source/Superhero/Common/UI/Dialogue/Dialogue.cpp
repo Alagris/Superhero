@@ -52,7 +52,7 @@ void UDialogue::followUp(TSoftObjectPtr<UDialogueStage> Stage)
 	}
 	else {
 		UDialogueStage * s = Stage.LoadSynchronous();
-		SpeakerText->SetText(FText::FromString(s->NpcText));
+		SpeakerText->SetText(s->NpcText);
 		if (IsValid(s->Animation)) {
 			IDialogueActor::Execute_OnPlayDialogueAnim(ResponseOptions->Npc.GetObject(), s->Animation);
 		}

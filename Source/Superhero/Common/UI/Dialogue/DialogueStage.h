@@ -18,7 +18,7 @@ class SUPERHERO_API UDialogueStage : public UPrimaryDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString NpcText;
+	FText NpcText;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UAnimMontage> Animation;
