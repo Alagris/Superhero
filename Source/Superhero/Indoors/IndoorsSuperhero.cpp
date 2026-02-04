@@ -9,6 +9,9 @@ AIndoorsSuperhero::AIndoorsSuperhero()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Clothing"));
+	
 }
 
 // Called when the game starts or when spawned

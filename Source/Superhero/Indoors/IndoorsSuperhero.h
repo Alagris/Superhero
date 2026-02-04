@@ -6,7 +6,11 @@
 #include "ISpudObject.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include <Common/Inventory/ClothingSystem.h>
 #include "IndoorsSuperhero.generated.h"
+
+
+class UClothingItem;
 
 UCLASS()
 class SUPERHERO_API AIndoorsSuperhero : public ACharacter, public ISpudObject
@@ -21,6 +25,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+
+
+	//UPROPERTY()
+	//TArray<TObjectPtr<USkeletalMeshComponent>> ClothesMeshes;
+	//
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//TMap<UClothingItem, USkeletalMeshComponent>
+	//
+	//void destroySkeletalMeshComponent(USkeletalMeshComponent* comp);
+	//USkeletalMeshComponent* createSkeletalMeshComponent(USkeletalMesh* mesh, bool allowOutline = true);
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,4 +46,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UBehaviorTree* BehaviourTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UClothingSystem* ClothingSys;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	UInventory* Inventory;
+	
+
 };
