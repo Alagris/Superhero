@@ -9,6 +9,7 @@
 #include "Common/UI/Dialogue/DialogueStage.h"
 #include <EnhancedInputSubsystems.h>
 #include <Common/UI/GameHUD.h>
+#include "IndoorsSuperhero.h"
 
 AIndoorsPlayerController::AIndoorsPlayerController() {
 	bShowMouseCursor = true;
@@ -54,6 +55,15 @@ UInputAction* AIndoorsPlayerController::MapTapKey(UInputMappingContext* ctx, FKe
 	mapping.Triggers.Add(tap);
 	return act;
 }
+
+UInputAction* AIndoorsPlayerController::MapPressedKey(UInputMappingContext* ctx, FKey key) {
+	UInputAction* act = NewObject<UInputAction>(this);
+	FEnhancedActionKeyMapping& mapping = ctx->MapKey(act, key);
+	UObject* outer = ctx->GetOuter();
+	UInputTriggerPressed* tap = NewObject<UInputTriggerPressed>(outer);
+	mapping.Triggers.Add(tap);
+	return act;
+}
 void AIndoorsPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -77,7 +87,7 @@ void AIndoorsPlayerController::SetupInputComponent()
 	MapKey(DefaultMappingContext, MoveAction, EKeys::LeftControl, true, true, EInputAxisSwizzle::ZYX);
 
 	MapKey(DefaultMappingContext, LookAction, EKeys::Mouse2D, false, true, false);
-	LeftClick = MapKey(DefaultMappingContext, EKeys::LeftMouseButton);
+	LeftClick = MapPressedKey(DefaultMappingContext, EKeys::LeftMouseButton);
 	RightClick = MapKey(DefaultMappingContext, EKeys::RightMouseButton);
 	PauseGameAction = MapKey(DefaultMappingContext, EKeys::Escape, EInputActionValueType::Boolean, true);
 	SetMapping(DefaultMappingContext);
@@ -95,7 +105,7 @@ void AIndoorsPlayerController::SetPawn(APawn* InPawn)
 	if (GameCharacter) {
 		GameCharacter->OnPossessed(this);
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent)) {
-			EnhancedInputComponent->BindAction(LeftClick, ETriggerEvent::Started, this, &AIndoorsPlayerController::OnLeftClick);
+			EnhancedInputComponent->BindAction(LeftClick, ETriggerEvent::Triggered, this, &AIndoorsPlayerController::OnLeftClick);
 			EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Started, this, &AIndoorsPlayerController::StartRightClick);
 			EnhancedInputComponent->BindAction(RightClick, ETriggerEvent::Completed, this, &AIndoorsPlayerController::EndRightClick);
 			// Moving
@@ -122,7 +132,10 @@ void AIndoorsPlayerController::Look(const FInputActionValue& Value)
 	if (isHoldingRMB) {
 		// input is a Vector2D
 		FVector2D LookAxisVector = Value.Get<FVector2D>();
-
+		CumulativeLookAxisVector += LookAxisVector;
+		if (abs(CumulativeLookAxisVector.X) > 0.01 || abs(CumulativeLookAxisVector.Y) > 0.01) {
+			SetShowMouseCursor(false);
+		}
 		if (LookAxisVector.X != 0.f)
 		{
 			AddYawInput(LookAxisVector.X);
@@ -136,15 +149,31 @@ void AIndoorsPlayerController::Look(const FInputActionValue& Value)
 
 void AIndoorsPlayerController::OnLeftClick(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Left click"));
+
 	if (bShowMouseCursor) {
 		FHitResult hit;
 		if (GetHitResultUnderCursor(ECC_Visibility, true, hit)) {
 			AActor * a = hit.GetActor();
 			if (a!=nullptr && a->Implements<UInteractable>()) {
-				IInteractable::Execute_Interact(a);
+				IInteractable::Execute_Interact(a, this);
 			}
 		}
 		
+	}
+}
+
+void AIndoorsPlayerController::EndRightClick(const FInputActionValue& Value)
+{
+	isHoldingRMB = false;
+	if (!bShowMouseCursor) {
+		SetShowMouseCursor(true);
+		if (IsValid(SelectedHero)) {
+			FHitResult hit;
+			if (GetHitResultUnderCursor(ECC_Visibility, true, hit)) {
+
+			}
+		}
 	}
 }
 
@@ -178,6 +207,13 @@ bool AIndoorsPlayerController::OpenDialogue(APlayerController* PlayerController,
 	}
 	return false;
 
+}
+void AIndoorsPlayerController::OnSuperHeroSelected(AIndoorsSuperhero* hero)
+{
+	SelectedHero = hero;
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		hud->showCharacterMenu(this, hero);
+	}
 }
 bool AIndoorsPlayerController::CloseDialogue()
 {

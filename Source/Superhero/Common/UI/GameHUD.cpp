@@ -4,6 +4,22 @@
 #include "Common/UI/GameHUD.h"
 
 
+bool AGameHUD::showCharacterMenu(APlayerController* PlayerController, AIndoorsSuperhero* Hero)
+{
+	if (CharacterMenuWidget == nullptr && IsValid(CharacterMenuWidgetClass)) {
+		CharacterMenuWidget = CreateWidget<UCharacterMenu>(GetWorld(), CharacterMenuWidgetClass);
+		CharacterMenuWidget->setup(this, PlayerController, Hero);
+		CharacterMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
+		CharacterMenuWidget->SetKeyboardFocus();
+
+		FInputModeGameAndUI Mode;
+		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+		Mode.SetWidgetToFocus(CharacterMenuWidget->TakeWidget());
+		PlayerController->SetInputMode(Mode);
+	}
+	return false;
+}
+
 bool AGameHUD::showDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
 	if (DialogueWidget == nullptr && IsValid(DialogueWidgetClass)) {
@@ -16,7 +32,7 @@ bool AGameHUD::showDialogue(APlayerController* PlayerController, TScriptInterfac
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 		Mode.SetWidgetToFocus(DialogueWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
-		PlayerController->SetShowMouseCursor(true);
+		//PlayerController->SetShowMouseCursor(true);
 		return true;
 		
 	}
@@ -41,7 +57,7 @@ bool AGameHUD::hideDialogue(APlayerController* PlayerController)
 		DialogueWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
-		PlayerController->SetShowMouseCursor(false);
+		//PlayerController->SetShowMouseCursor(false);
 		return true;
 	}
 	return false;

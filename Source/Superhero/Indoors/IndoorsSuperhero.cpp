@@ -2,6 +2,7 @@
 
 
 #include "Indoors/IndoorsSuperhero.h"
+#include "Indoors/IndoorsPlayerController.h"
 
 // Sets default values
 AIndoorsSuperhero::AIndoorsSuperhero()
@@ -11,7 +12,8 @@ AIndoorsSuperhero::AIndoorsSuperhero()
 
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Clothing"));
-	
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+
 }
 
 // Called when the game starts or when spawned
@@ -33,5 +35,25 @@ void AIndoorsSuperhero::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AIndoorsSuperhero::Interact_Implementation(AActor * actor)
+{
+	if (AIndoorsPlayerController* player = Cast<AIndoorsPlayerController>(actor)) {
+		player->OnSuperHeroSelected(this);
+	}
+	
+}
+
+void AIndoorsSuperhero::OnDialogueEntered_Implementation(APlayerController* Player)
+{
+}
+
+void AIndoorsSuperhero::OnDialogueExited_Implementation(APlayerController* Player)
+{
+}
+
+void AIndoorsSuperhero::OnPlayDialogueAnim_Implementation(UAnimMontage* Anim)
+{
 }
 

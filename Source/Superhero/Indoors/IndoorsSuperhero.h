@@ -6,14 +6,16 @@
 #include "ISpudObject.h"
 #include "GameFramework/Character.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Common/UI/Dialogue/DialogueActor.h"
+#include "Common/Interactable.h"
 #include <Common/Inventory/ClothingSystem.h>
 #include "IndoorsSuperhero.generated.h"
 
-
+class APlayerController;
 class UClothingItem;
 
 UCLASS()
-class SUPERHERO_API AIndoorsSuperhero : public ACharacter, public ISpudObject
+class SUPERHERO_API AIndoorsSuperhero : public ACharacter, public ISpudObject, public IDialogueActor, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -44,6 +46,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText CharacterName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSoftObjectPtr<class UDialogueStage> DialogueStage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UBehaviorTree* BehaviourTree;
 
@@ -52,6 +60,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UInventory* Inventory;
+
+	virtual void Interact_Implementation(AActor* actor) override;
 	
+	virtual void OnDialogueEntered_Implementation(APlayerController* Player) override;
+
+	virtual void OnDialogueExited_Implementation(APlayerController* Player) override;
+	
+	virtual FText GetCharacterName_Implementation() override {
+		return CharacterName;
+	}
+
+	virtual void OnPlayDialogueAnim_Implementation(UAnimMontage* Anim) override;
 
 };

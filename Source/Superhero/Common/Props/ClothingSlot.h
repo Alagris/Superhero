@@ -22,6 +22,7 @@ enum class EClothingSlot : uint8
 	UPPER = 1 + 4 + 8 + 16                UMETA(DisplayName = "ASS+STOMACH+BREAST+ARMS"), // 00011101 
 	ARMS_HANDS = 8 + 64                   UMETA(DisplayName = "ARMS+HANDS"),
 	BIKINI = 4 + 16                       UMETA(DisplayName = "ASS+BREAST"),
+	PANTS = 4 + 128                        UMETA(DisplayName = "ASS+LEGS"),
 	LEGS_FEET = 32 + 128                  UMETA(DisplayName = "FEET+LEGS"),
 	LOWER = 4 + 32 + 128                  UMETA(DisplayName = "FEET+LEGS+ASS"),
 	NO_ARMS = 1 + 4 + 16 + 32 + 128       UMETA(DisplayName = "FEET+LEGS+ASS+STOMACH+BREAST"),

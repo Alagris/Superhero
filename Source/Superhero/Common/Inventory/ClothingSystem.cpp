@@ -22,7 +22,9 @@ void UClothingSystem::InitializeComponent()
 			for (auto e:inventory->Items) {
 				if (e.Value.EquippedAt >= 0) {
 					e.Value.EquippedAt = -1;
-					e.Key->use(inventory, e.Value);
+					if (IsValid(e.Key)) {
+						e.Key->use(inventory, e.Value);
+					}
 				}
 			}
 		}

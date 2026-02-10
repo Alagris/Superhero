@@ -50,7 +50,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact_Implementation() override {
+	virtual void Interact_Implementation(AActor* p) override {
 		if (bIsOpen) {
 			bIsOpen = false;
 			OnClose();

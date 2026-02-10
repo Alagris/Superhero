@@ -11,6 +11,7 @@
 
 class IDialogueActor;
 class UDialogueStage;
+class AIndoorsSuperhero;
 /**
  * 
  */
@@ -31,6 +32,8 @@ class SUPERHERO_API AIndoorsPlayerController : public APlayerController, public 
 	void MapKey(UInputMappingContext* ctx, UInputAction* act, FKey key, bool negateX, bool negateY, bool negateZ);
 	void MapKey(UInputMappingContext* ctx, UInputAction* act, FKey key, bool negate = false, bool swizzle = false, EInputAxisSwizzle order = EInputAxisSwizzle::YXZ);
 
+	UInputAction* MapPressedKey(UInputMappingContext* ctx, FKey key);
+
 	/** Initialize input bindings */
 	virtual void SetupInputComponent() override;
 
@@ -40,18 +43,17 @@ class SUPERHERO_API AIndoorsPlayerController : public APlayerController, public 
 	virtual void SetPawn(APawn* InPawn) override;
 
 	void SetMapping(UInputMappingContext* ctx);
-
+	FVector2D CumulativeLookAxisVector;
 	void Look(const FInputActionValue& Value);
 
 	void OnLeftClick(const FInputActionValue& Value);
 	void StartRightClick(const FInputActionValue& Value) {
 		isHoldingRMB = true;
-		SetShowMouseCursor(false);
+		CumulativeLookAxisVector = FVector2D(0,0);
+		
 	}
-	void EndRightClick(const FInputActionValue& Value) {
-		isHoldingRMB = false;
-		SetShowMouseCursor(true);
-	}
+	void EndRightClick(const FInputActionValue& Value);
+	
 	bool isHoldingRMB=false;
 	/** MappingContext */
 	UPROPERTY()
@@ -76,8 +78,10 @@ class SUPERHERO_API AIndoorsPlayerController : public APlayerController, public 
 	void OnTriggerPauseGame(const FInputActionValue& Value) {
 		TriggerPauseGame();
 	}
-public:
 
+	
+public:
+	AIndoorsSuperhero* SelectedHero;
 	class AIndoorsPawn* GameCharacter;
 
 
@@ -86,6 +90,7 @@ public:
 	bool UnpauseGame();
 	bool CloseDialogue();
 	bool OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
-
+	void OnSuperHeroSelected(class AIndoorsSuperhero* hero);
+	
 	
 };
