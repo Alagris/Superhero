@@ -4,7 +4,7 @@
 #include "Indoors/IndoorsPlayerController.h"
 #include "Indoors/IndoorsPawn.h"
 #include <EnhancedInputComponent.h>
-#include "Common/Interactable.h"
+#include "Common/Interact/Interactable.h"
 #include "Common/UI/Dialogue/DialogueActor.h"
 #include "Common/UI/Dialogue/DialogueStage.h"
 #include <EnhancedInputSubsystems.h>

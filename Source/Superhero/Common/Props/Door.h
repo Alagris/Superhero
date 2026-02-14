@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ISpudObject.h"
-#include "Common/Interactable.h"
+#include "Common/Interact/Interactable.h"
 #include "Door.generated.h"
 
 UCLASS()

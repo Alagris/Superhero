@@ -32,7 +32,7 @@ bool AGameHUD::showDialogue(APlayerController* PlayerController, TScriptInterfac
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 		Mode.SetWidgetToFocus(DialogueWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
-		//PlayerController->SetShowMouseCursor(true);
+		PlayerController->SetShowMouseCursor(true);
 		return true;
 		
 	}
@@ -57,7 +57,7 @@ bool AGameHUD::hideDialogue(APlayerController* PlayerController)
 		DialogueWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
-		//PlayerController->SetShowMouseCursor(false);
+		PlayerController->SetShowMouseCursor(false);
 		return true;
 	}
 	return false;

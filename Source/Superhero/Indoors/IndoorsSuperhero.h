@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "ISpudObject.h"
-#include "GameFramework/Character.h"
+#include "Common/Character/Commander/CommandedCharacter.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Common/UI/Dialogue/DialogueActor.h"
-#include "Common/Interactable.h"
+#include "Common/Interact/Interactable.h"
 #include <Common/Inventory/ClothingSystem.h>
 #include "IndoorsSuperhero.generated.h"
 
@@ -15,7 +15,7 @@ class APlayerController;
 class UClothingItem;
 
 UCLASS()
-class SUPERHERO_API AIndoorsSuperhero : public ACharacter, public ISpudObject, public IDialogueActor, public IInteractable
+class SUPERHERO_API AIndoorsSuperhero : public ACommandedCharacter, public ISpudObject, public IDialogueActor, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -51,9 +51,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UDialogueStage> DialogueStage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UBehaviorTree* BehaviourTree;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UClothingSystem* ClothingSys;

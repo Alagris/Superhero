@@ -10,10 +10,6 @@
 
 class AIndoorsPlayerController;
 
-struct Ray {
-	FVector start, end;
-};
-
 
 UCLASS()
 class SUPERHERO_API AIndoorsPawn : public APawn, public ISpudObject
