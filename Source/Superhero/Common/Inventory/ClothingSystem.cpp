@@ -17,16 +17,9 @@ void UClothingSystem::InitializeComponent()
 		inventory = c->FindComponentByClass<UInventory>();
 		if (IsValid(inventory)) {
 			CharacterMesh = c->GetMesh();
-			inventory->ItemEquippedListeners.AddUObject(this, &UClothingSystem::OnEquip);
-			inventory->ItemUnequippedListeners.AddUObject(this, &UClothingSystem::OnUnequip);
-			for (auto e:inventory->Items) {
-				if (e.Value.EquippedAt >= 0) {
-					e.Value.EquippedAt = -1;
-					if (IsValid(e.Key)) {
-						e.Key->use(inventory, e.Value);
-					}
-				}
-			}
+			//inventory->ItemRemovedListeners.AddUObject(this, &UClothingSystem::OnItemRemoved);
+			//inventory->ItemAddedListeners.AddUObject(this, &UClothingSystem::OnItemAdded);
+			inventory->ClearListeners.AddUObject(this, &UClothingSystem::OnInventoryCleared);
 		}
 	}
 }
@@ -35,7 +28,8 @@ void UClothingSystem::InitializeComponent()
 void UClothingSystem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	inventory->EnsureLootInitialized();
+	autoEquip();
 	
 	
 }
@@ -75,44 +69,85 @@ USkeletalMeshComponent* UClothingSystem::createSkeletalMeshComponent(USkeletalMe
 	return clothingComp;
 }
 
-void UClothingSystem::OnEquip(UClothingItem* type, FItemInstance& item, UInventory* inv)
+void UClothingSystem::UnequipAll(bool fireEvents)
+{
+	OccupiedDeviousClothingSlots = 0;
+	OccupiedClothingSlots = 0;
+	for (int i = 0; i < ClothesMeshes.Num(); i++) {
+		const UClothingItem* t = ClothesMeshes[i].ItemType;
+		UItemInstance* j = ClothesMeshes[i].Item;
+		destroySkeletalMeshComponent(ClothesMeshes[i].Mesh);
+		j->EquippedAt = -1;
+		if (fireEvents && IsValid(inventory)) {
+			inventory->ItemUnequippedListeners.Broadcast(t, j, inventory);
+		}
+		
+	}
+	ClothesMeshes.Empty();
+}
+
+void UClothingSystem::Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents)
 {
 	
-	if (item.EquippedAt == -1) {
+	if (item->EquippedAt == -1) {
 		uint8 s8 = type->slot();
 		if ((OccupiedDeviousClothingSlots & s8) == 0) {
 			if ((OccupiedClothingSlots & s8) != 0) {
 				for (int i = 0; i < ClothesMeshes.Num();i++) {
-					if ((ClothesMeshes[i].Item->slot() & s8) != 0) {
-						FItemInstance&j = inventory->Items[ClothesMeshes[i].Item];
-						RemoveItem(ClothesMeshes[i].Item, j);
+					if ((ClothesMeshes[i].ItemType->slot() & s8) != 0) {
+						UItemInstance*j = ClothesMeshes[i].Item;
+						RemoveItem(j, fireEvents);
 					}
 				}
 			}
 			if (USkeletalMesh* clothingMesh = type->WearableMesh.LoadSynchronous()) {
 				USkeletalMeshComponent* clothingComp = createSkeletalMeshComponent(clothingMesh);
-				item.EquippedAt = ClothesMeshes.Add(FEquippedClothes(clothingComp, type));
+				item->EquippedAt = ClothesMeshes.Add(FEquippedClothes(clothingComp, type, item));
 				OccupiedClothingSlots |= s8;
 				if (type->IsDevious) OccupiedDeviousClothingSlots |= s8;
+				if (fireEvents && IsValid(inventory)) {
+					inventory->ItemEquippedListeners.Broadcast(type, item, inventory);
+				}
 			}
 		}
 	}
 }
 
-void UClothingSystem::OnUnequip(UClothingItem* type, FItemInstance& item, UInventory* inv)
+void UClothingSystem::Unequip(const UClothingItem* type, UItemInstance* item, bool fireEvents)
 {
 	if (!type->IsDevious) {
-		RemoveItem(type, item);
+		RemoveItem(item, fireEvents);
 	}
 }
 
-void UClothingSystem::RemoveItem(UClothingItem* type, FItemInstance& item)
+void UClothingSystem::RemoveItem(UItemInstance* item, bool fireEvents)
 {
-	if (item.EquippedAt >= 0) {
-		destroySkeletalMeshComponent(ClothesMeshes[item.EquippedAt].Mesh);
-		ClothesMeshes.RemoveAtSwap(item.EquippedAt);
-		item.EquippedAt = -1;
+	if (item->EquippedAt >= 0) {
+		const int idx = item->EquippedAt;
+		const UClothingItem * type = ClothesMeshes[idx].ItemType;
+		destroySkeletalMeshComponent(ClothesMeshes[idx].Mesh);
+		ClothesMeshes.Last().Item->EquippedAt = idx;
+		ClothesMeshes.RemoveAtSwap(idx);
+		item->EquippedAt = -1;
 		OccupiedClothingSlots &= ~type->slot();
+		if (fireEvents && IsValid(inventory)) {
+			inventory->ItemUnequippedListeners.Broadcast(type, item, inventory);
+		}
 	}
 }
 
+
+void UClothingSystem::autoEquip()
+{
+	if (IsValid(inventory)) {
+		UnequipAll();
+		for (auto& entry : inventory->Items) {
+			UItemInstance* item = entry.Value;
+			if (const UClothingItem* clothingItem = Cast<UClothingItem>(item->ItemType)) {
+				if (!clothingItem->IsDevious && canEquipClothes(clothingItem)) {
+					Equip(clothingItem, item);
+				}
+			}
+		}
+	}
+}

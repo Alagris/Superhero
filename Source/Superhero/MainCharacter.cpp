@@ -2,8 +2,9 @@
 
 
 #include "MainCharacter.h"
+#include <Common/Character/Movement/AdvancedMovementComponent.h>
 
-AMainCharacter::AMainCharacter() {
+AMainCharacter::AMainCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvancedMovementComponent>(CharacterMovementComponentName)) {
 
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Clothing"));

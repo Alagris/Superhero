@@ -7,6 +7,7 @@
 #include "Dialogue/Dialogue.h"
 #include "PauseMenu/PauseMenu.h"
 #include "CharacterMenu/CharacterMenu.h"
+#include "Inventory/InventoryMenu.h"
 #include "GameHUD.generated.h"
 
 
@@ -28,6 +29,9 @@ class SUPERHERO_API AGameHUD : public AHUD
 	UPROPERTY(EditDefaultsOnly, Category = "User Interface")
 	TSubclassOf<UCharacterMenu> CharacterMenuWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "User Interface")
+	TSubclassOf<UInventoryMenu> InventoryMenuClass;
+
 	UPROPERTY()
 	TObjectPtr<UDialogue> DialogueWidget;
 
@@ -37,7 +41,12 @@ class SUPERHERO_API AGameHUD : public AHUD
 	UPROPERTY()
 	TObjectPtr<UCharacterMenu> CharacterMenuWidget;
 
+	UPROPERTY()
+	TObjectPtr<UInventoryMenu> InventoryMenuWidget;
+
 public:
+	bool showInventoryMenu(APlayerController* PlayerController, class UInventory* Inv);
+
 	bool showCharacterMenu(APlayerController* PlayerController, class AIndoorsSuperhero * Hero);
 
 	bool showDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
@@ -49,13 +58,23 @@ public:
 	bool showPauseMenu(APlayerController* controller);
 
 	bool hidePauseMenu(APlayerController* PlayerController);
+
+	bool hideInventoryMenu(APlayerController* PlayerController);
 	
+	inline bool canOpenInventoryMenu() {
+		return IsValid(InventoryMenuClass);
+	}
+
 	inline bool canOpenPauseMenu() {
 		return IsValid(PauseMenuWidgetClass);
 	}
 
 	inline bool canOpenDialogue() {
 		return IsValid(DialogueWidgetClass);
+	}
+
+	inline bool isInventoryMenuOpen() {
+		return IsValid(InventoryMenuWidget);
 	}
 
 	inline bool isPauseMenuOpen() {

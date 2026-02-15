@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "../Inventory/Loot/Loot.h"
 #include "Item.generated.h"
 
+class USpudState;
+class USpudStateCustomData;
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API UItem : public UPrimaryDataAsset
+class SUPERHERO_API UItem : public ULoot
 {
 	GENERATED_BODY()
 
@@ -31,10 +34,19 @@ public:
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UMaterialInterface> OverrideMaterial;
+	TArray<TSoftObjectPtr<UMaterialInterface>> OverrideMaterial;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	int OverrideMaterialSlot = 0;
+	virtual bool use(AActor* target, class UItemInstance* instance) const { return false; };
 
-	virtual void use(class UInventory* inv, struct FItemInstance& instance) {};
+	virtual UItemInstance * spawn(UObject* outer, int count = 1) const;
+
+	virtual void sample(class UInventory* inv, int count = 1) override;
+
+	virtual void store(class UItemInstance* instance, const USpudState* State, USpudStateCustomData* CustomData) const { };
+
+	virtual void restore(class UItemInstance* instance, USpudState* State, USpudStateCustomData* CustomData) const { };
+
+	virtual void onAddedToInventory(class UItemInstance* instance) const {}
+
+	virtual void onRemovedFromInventory(class UItemInstance* instance) const{}
 };

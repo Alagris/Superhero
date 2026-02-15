@@ -11,10 +11,11 @@
 class UClothingItem;
 
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemAddedSignature, FItemInstance& /*item*/, class UInventory* /* inventory */);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemRemovedSignature, FItemInstance& /*item*/, class UInventory* /* inventory */);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnItemEquippedSignature, UClothingItem * /*type*/, FItemInstance& /*item*/, class UInventory* /* inventory */);
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnItemConsumedSignature, FItemInstance& /*item*/, int /*consumedCount*/, class UInventory* /* inventory */);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemAddedSignature, class UItemInstance* /*item*/, class UInventory* /* inventory */);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnItemRemovedSignature, class UItemInstance* /*item*/, class UInventory* /* inventory */);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnItemEquippedSignature, const UClothingItem * /*type*/, class UItemInstance* /*item*/, class UInventory* /* inventory */);
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnItemConsumedSignature, class UItemInstance* /*item*/, int /*consumedCount*/, class UInventory* /* inventory */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnClearInventorySignature, class UInventory * /* inventory */);
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -29,15 +30,42 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
+	UPROPERTY(SaveGame)
+	bool isLootInitialized=false;
 public:	
 	
-	
+	bool EnsureLootInitialized();
+
+	virtual void SpudStoreCustomData(const USpudState* State, USpudStateCustomData* CustomData) {
+		CustomData->WriteInt(Items.Num());
+
+		for (auto entry : Items) {
+			UItemInstance* item = entry.Value;
+			item->store(this, State, CustomData);
+		}
+	}
+
+	virtual void SpudRestoreCustomData(USpudState* State, USpudStateCustomData* CustomData) {
+		clearInventory();
+		int count = 0;
+		bool b = CustomData->ReadInt(count);
+		check(b);
+		UWorld* w = GetWorld();
+		for (int i = 0; i < count; i++) {
+			TObjectPtr<UItemInstance> item = NewObject<UItemInstance>(w, UItemInstance::StaticClass());
+			item->restore(this, State, CustomData);
+		}
+		
+	}
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<const UItem*, UItemInstance*> Items;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
-	TMap<UItem*, FItemInstance> Items;
+	class ULoot* Loot;
 
 	FOnItemAddedSignature ItemAddedListeners;
 
@@ -49,12 +77,23 @@ public:
 
 	FOnItemConsumedSignature ItemConsumedListeners;
 
-	UFUNCTION(BlueprintCallable)
-	void addItem(UItem * item, int quantity);
+	FOnClearInventorySignature ClearListeners;
 
 	UFUNCTION(BlueprintCallable)
-	void removeItem(UItem* item, int quantity);
+	void addItem(UItemInstance* item);
 
 	UFUNCTION(BlueprintCallable)
-	void useItem(UItem* item, int quantity);
+	UItemInstance* spawnItem(const UItem* itemType, int quantity);
+
+	UItemInstance* removeItem(UItemInstance* item);
+
+	UFUNCTION(BlueprintCallable)
+	UItemInstance* removeItem(const UItem* item, int quantity=1, bool spawnPopped=true);
+
+
+	UFUNCTION(BlueprintCallable)
+	UItemInstance* useItem(const UItem* item, int quantity);
+
+	void clearInventory();
+	void resetInventory();
 };

@@ -4,6 +4,24 @@
 #include "Common/UI/GameHUD.h"
 
 
+bool AGameHUD::showInventoryMenu(APlayerController* PlayerController, UInventory* Inv)
+{
+	if (InventoryMenuWidget == nullptr && IsValid(InventoryMenuClass)) {
+		InventoryMenuWidget = CreateWidget<UInventoryMenu>(GetWorld(), InventoryMenuClass);
+		InventoryMenuWidget->setup(this, PlayerController, Inv);
+		InventoryMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
+		InventoryMenuWidget->SetKeyboardFocus();
+
+		FInputModeUIOnly Mode;
+		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
+		Mode.SetWidgetToFocus(InventoryMenuWidget->TakeWidget());
+		PlayerController->SetInputMode(Mode);
+		PlayerController->SetShowMouseCursor(true);
+		PlayerController->SetPause(true);
+	}
+	return false;
+}
+
 bool AGameHUD::showCharacterMenu(APlayerController* PlayerController, AIndoorsSuperhero* Hero)
 {
 	if (CharacterMenuWidget == nullptr && IsValid(CharacterMenuWidgetClass)) {
@@ -88,6 +106,20 @@ bool AGameHUD::hidePauseMenu(APlayerController* PlayerController)
 	if (PauseMenuWidget != nullptr) {
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
+		FInputModeGameOnly Mode;
+		PlayerController->SetInputMode(Mode);
+		PlayerController->SetShowMouseCursor(false);
+		PlayerController->SetPause(false);
+		return true;
+	}
+	return false;
+}
+
+bool AGameHUD::hideInventoryMenu(APlayerController* PlayerController)
+{
+	if (InventoryMenuWidget != nullptr) {
+		InventoryMenuWidget->RemoveFromParent();
+		InventoryMenuWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(false);

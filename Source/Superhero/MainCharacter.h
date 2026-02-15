@@ -17,7 +17,7 @@ class SUPERHERO_API AMainCharacter : public AThirdPersonCharacter, public IDialo
 {
 	GENERATED_BODY()
 public:
-	AMainCharacter();
+	AMainCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FText CharacterName;

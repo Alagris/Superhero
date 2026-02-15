@@ -2,4 +2,11 @@
 
 
 #include "Common/Inventory/ItemInstance.h"
+#include "Common/Inventory/Inventory.h"
 
+inline void UItemInstance::takeFromOwner()
+{
+	if (IsValid(Owner)) {
+		Owner->removeItem(this);
+	}
+}

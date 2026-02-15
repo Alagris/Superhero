@@ -34,6 +34,10 @@ public:
 	uint8 slot() const{
 		return uint8(Slot);
 	}
-	virtual void use(class UInventory* inv, struct FItemInstance& instance) override;
+	virtual bool use(AActor* target, class UItemInstance* instance) const override;
+
+	virtual void restore(class UItemInstance* instance, class USpudState* State,class USpudStateCustomData* CustomData) const override;
+
+	virtual void onRemovedFromInventory(class UItemInstance* instance) const override;
 
 };

@@ -52,7 +52,7 @@ class AThirdPersonCharacter : public ACharacter
 public:
 
 	/** Constructor */
-	AThirdPersonCharacter();	
+	AThirdPersonCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

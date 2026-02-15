@@ -8,19 +8,24 @@
 #include "Common/Props/ClothingItem.h"
 #include "ClothingSystem.generated.h"
 
+class UItemInstance;
+
 USTRUCT(BlueprintType)
 struct SUPERHERO_API FEquippedClothes
 {
 	GENERATED_BODY()
 public:
 	FEquippedClothes() {}
-	FEquippedClothes(TObjectPtr<USkeletalMeshComponent> m, UClothingItem* i):Mesh(m), Item(i){}
+	FEquippedClothes(TObjectPtr<USkeletalMeshComponent> m, const UClothingItem* t, UItemInstance* i):Mesh(m), ItemType(t), Item(i){}
 
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> Mesh;
 
 	UPROPERTY()
-	UClothingItem* Item;
+	const UClothingItem* ItemType;
+
+	UPROPERTY()
+	UItemInstance* Item;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -52,9 +57,12 @@ public:
 	void destroySkeletalMeshComponent(USkeletalMeshComponent* comp);
 	USkeletalMeshComponent* createSkeletalMeshComponent(USkeletalMesh* mesh);
 
-	void OnEquip(UClothingItem* type, FItemInstance& item, UInventory* inventory);
 
-	void OnUnequip(UClothingItem* type, FItemInstance& item, UInventory* inventory);
+	void Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents=true);
+
+	void Unequip(const UClothingItem* type, UItemInstance* item, bool fireEvents = true);
+
+	void UnequipAll(bool fireEvents = true);
 
 	UPROPERTY()
 	TArray<FEquippedClothes> ClothesMeshes;
@@ -75,6 +83,13 @@ public:
 	{
 		return !item->IsDevious;
 	}
+
+	void autoEquip();
 private:
-	void RemoveItem(UClothingItem* type, FItemInstance& item);
+	void RemoveItem(UItemInstance* item, bool fireEvents);
+
+	void OnInventoryCleared(UInventory* inv) {
+		UnequipAll(false);
+	}
+
 };

@@ -18,9 +18,17 @@ UInventory::UInventory()
 void UInventory::BeginPlay()
 {
 	Super::BeginPlay();
+	EnsureLootInitialized();
+}
 
-	// ...
-	
+bool UInventory::EnsureLootInitialized()
+{
+	if (!isLootInitialized) {
+		resetInventory();
+		isLootInitialized = true;
+		return true;
+	}
+	return false;
 }
 
 
@@ -32,40 +40,90 @@ void UInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompo
 	// ...
 }
 
-void UInventory::addItem(UItem* item, int quantity)
+
+void UInventory::addItem(UItemInstance* item)
 {
-	if (quantity > 0) {
-		FItemInstance i;
-		i.Count = 0;
-		i.ItemType = item;
-		FItemInstance& j = Items.FindOrAdd(item, i);
-		j.Count += quantity;
-		ItemAddedListeners.Broadcast(j, this);
+	if (item->Count > 0) {
+		UItemInstance * val = Items.FindOrAdd(item->ItemType, item);
+		check(val != nullptr);
+		if (val == item) {
+			item->Owner = this;
+			val = item;
+		}
+		else {
+			val->Count += item->Count;
+		}
+		ItemAddedListeners.Broadcast(val, this);
 	}
 }
 
-void UInventory::removeItem(UItem* item, int quantity)
+UItemInstance* UInventory::spawnItem(const UItem* itemType, int quantity)
 {
-	if (quantity > 0) {
-		FSetElementId id = Items.FindId(item);
-		TPair<UItem*, FItemInstance>& i = Items.Get(id);
-		i.Value.Count -= quantity;
-		ItemRemovedListeners.Broadcast(i.Value, this);
-		if (i.Value.Count <= 0) {
-			Items.Remove(id);
-		}
-	}
+	UItemInstance* item = itemType->spawn(GetWorld(), quantity);
+	addItem(item);
+	return item;
 }
 
-void UInventory::useItem(UItem* item, int quantity)
+UItemInstance* UInventory::removeItem(UItemInstance* item) {
+	
+	FSetElementId id = Items.FindId(item->ItemType);
+	if (id.IsValidId()) {
+		TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
+		if (item == i.Value) {
+			Items.Remove(id);
+			item->Owner = nullptr;
+			ItemRemovedListeners.Broadcast(item, this);
+		}
+	}
+	return item;
+}
+UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spawnPopped)
 {
 	if (quantity > 0) {
 		FSetElementId id = Items.FindId(item);
-		TPair<UItem*, FItemInstance>& i = Items.Get(id);
-		item->use(this, i.Value);
-		if (i.Value.Count <= 0) {
-			Items.Remove(id);
+		if (id.IsValidId()) {
+			TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
+			UItemInstance* popped = i.Value->popCount(GetWorld(), quantity, spawnPopped);
+			if (popped == i.Value) {
+				Items.Remove(id);
+				popped->Owner = nullptr;
+				ItemRemovedListeners.Broadcast(i.Value, this);
+				
+			}
+			
+			return popped;
 		}
+	}
+	return nullptr;
+}
+
+UItemInstance* UInventory::useItem(const UItem* item, int quantity)
+{
+	if (quantity > 0) {
+		FSetElementId id = Items.FindId(item);
+		if (id.IsValidId()) {
+			TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
+			i.Value->use(GetOwner());
+			if (i.Value->Count <= 0) {
+				Items.Remove(id);
+			}
+			return i.Value;
+		}
+	}
+	return nullptr;
+}
+
+void UInventory::clearInventory()
+{
+	ClearListeners.Broadcast(this);
+	Items.Empty();
+}
+
+void UInventory::resetInventory()
+{
+	clearInventory();
+	if (IsValid(Loot)) {
+		Loot->sample(this, 1);
 	}
 }
 
