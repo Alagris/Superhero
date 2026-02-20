@@ -118,6 +118,10 @@ bool AGameHUD::hidePauseMenu(APlayerController* PlayerController)
 bool AGameHUD::hideInventoryMenu(APlayerController* PlayerController)
 {
 	if (InventoryMenuWidget != nullptr) {
+		if (InventoryMenuWidget->NpcInv != nullptr) {
+			InventoryMenuWidget->NpcInv->InventoryWidget = nullptr;
+		}
+		InventoryMenuWidget->PlayerInv->InventoryWidget = nullptr;
 		InventoryMenuWidget->RemoveFromParent();
 		InventoryMenuWidget = nullptr;
 		FInputModeGameOnly Mode;

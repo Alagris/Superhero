@@ -31,19 +31,37 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class UInventory* Owner;
 
-	bool IsOwnedBy(class UInventory* o) {
+	bool isSkeletal() const {
+		return ItemType->isSkeletal();
+	}
+	USkeletalMesh* getSkeletalMesh() const {
+		return ItemType->getSkeletalMesh();
+	}
+	UStaticMesh* getMesh() const{
+		return ItemType->getMesh();
+	}
+	inline const TArray<TSoftObjectPtr<UMaterialInterface>>& getOverrideMaterials() const {
+		return ItemType->getOverrideMaterials();
+	}
+	void applyMaterials(UMeshComponent* c) const {
+		ItemType->applyMaterials(c);
+	}
+	bool IsOwnedBy(class UInventory* o) const {
 		return o == Owner;
 	}
 	inline bool use(AActor * target) {
 		return ItemType->use(target, this);
 	}
+	UItemInstance* remove(int quantity = 1, bool spawnPopped = true);
 
-	inline void takeFromOwner();
+	class AItemActor* drop(int quantity=1, AActor* target=nullptr);
+
+	inline UItemInstance* takeFromOwner();
 
 	inline UItemInstance* popCount(UObject* outer, int count = 1, bool spawnPopped = true) {
 		if (Count > count) {
 			Count -= count;
-			return spawnPopped ? ItemType->spawn(outer, count) : nullptr;
+			return spawnPopped ? ItemType->create(outer, count) : nullptr;
 		}
 		else {
 			EquippedAt = -1;
@@ -51,6 +69,10 @@ public:
 		}
 	}
 
+
+	class AItemActor* spawn(UWorld* world, FTransform trans) {
+		return ItemType->spawn(world, this, trans);
+	}
 
 	void store(class UInventory* user, const USpudState* State, USpudStateCustomData* CustomData) {
 		CustomData->WriteInt(Count);

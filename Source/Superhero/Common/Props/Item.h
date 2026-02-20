@@ -32,13 +32,33 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UStaticMesh> Mesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<USkeletalMesh> WearableMesh;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<TSoftObjectPtr<UMaterialInterface>> OverrideMaterial;
-
+	
+	inline const TArray<TSoftObjectPtr<UMaterialInterface>>& getOverrideMaterials() const{
+		return OverrideMaterial;
+	}
+	inline USkeletalMesh* getSkeletalMesh() const {
+		return WearableMesh.LoadSynchronous();
+	}
+	inline bool isSkeletalMeshNull() const {
+		return WearableMesh.IsNull();
+	}
+	inline UStaticMesh* getMesh() const {
+		return Mesh.LoadSynchronous();
+	}
+	inline bool isSkeletal() const {
+		return Mesh.IsNull();
+	}
 	virtual bool use(AActor* target, class UItemInstance* instance) const { return false; };
 
-	virtual UItemInstance * spawn(UObject* outer, int count = 1) const;
+	virtual UItemInstance * create(UObject* outer, int count = 1) const;
+
+	virtual class AItemActor* spawn(UWorld* world, class UItemInstance* instance, FTransform trans) const;
 
 	virtual void sample(class UInventory* inv, int count = 1) override;
 
@@ -49,4 +69,14 @@ public:
 	virtual void onAddedToInventory(class UItemInstance* instance) const {}
 
 	virtual void onRemovedFromInventory(class UItemInstance* instance) const{}
+
+	void applyMaterials(UMeshComponent * c) const{
+		if (c != nullptr) {
+			for (int i = 0; i < OverrideMaterial.Num(); i++) {
+				if (UMaterialInterface* mat = OverrideMaterial[i].LoadSynchronous()) {
+					c->SetMaterial(i, mat);
+				}
+			}
+		}
+	}
 };

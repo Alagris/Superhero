@@ -17,9 +17,6 @@ class SUPERHERO_API UClothingItem : public UItem
 public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> WearableMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool IsFullBodyReplacement=false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -34,6 +31,14 @@ public:
 	uint8 slot() const{
 		return uint8(Slot);
 	}
+	
+	inline bool conflictsWith(const uint8 slots) const {
+		return (slots & slot()) != 0;
+	}
+	inline bool conflictsWith(const UClothingItem& other) const {
+		return conflictsWith(other.slot());
+	}
+
 	virtual bool use(AActor* target, class UItemInstance* instance) const override;
 
 	virtual void restore(class UItemInstance* instance, class USpudState* State,class USpudStateCustomData* CustomData) const override;

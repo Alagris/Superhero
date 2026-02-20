@@ -37,7 +37,7 @@ void AIndoorsSuperhero::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 
 }
 
-void AIndoorsSuperhero::Interact_Implementation(AActor * actor)
+void AIndoorsSuperhero::OnInteract_Implementation(AActor* actor, class UItemInstance* item, const struct FHitResult& Hit)
 {
 	if (AIndoorsPlayerController* player = Cast<AIndoorsPlayerController>(actor)) {
 		player->OnSuperHeroSelected(this);

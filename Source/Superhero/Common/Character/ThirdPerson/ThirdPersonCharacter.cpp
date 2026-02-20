@@ -106,13 +106,13 @@ bool AThirdPersonCharacter::CastRay(FHitResult& OutHit, float distance, const TA
 	return UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), ray.start, ray.end, objectTypesArray, false, actorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 }
 void AThirdPersonCharacter::TriggerInteractStart(const FInputActionValue& Value) {
-	FHitResult OutHit;
+	
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypesArray;
 	objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Visibility));
 	//objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
 	objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
-	if (CastRay(OutHit, InteractDistance, objectTypesArray)) {
-		PhysicsHandle->InteractStart(OutHit);
+	if (CastRay(PhysicsHandle->HitResult, InteractDistance, objectTypesArray)) {
+		PhysicsHandle->InteractStart();
 	}
 }
 

@@ -10,6 +10,9 @@
 
 class UItemInstance;
 
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnItemEquippedSignature, const UClothingItem* /*type*/, class UItemInstance* /*item*/, class UClothingSystem* /* inventory */);
+
+
 USTRUCT(BlueprintType)
 struct SUPERHERO_API FEquippedClothes
 {
@@ -29,7 +32,7 @@ public:
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SUPERHERO_API UClothingSystem : public UActorComponent
+class SUPERHERO_API UClothingSystem : public UInventory
 {
 	GENERATED_BODY()
 
@@ -56,24 +59,31 @@ public:
 
 	void destroySkeletalMeshComponent(USkeletalMeshComponent* comp);
 	USkeletalMeshComponent* createSkeletalMeshComponent(USkeletalMesh* mesh);
+	virtual bool EnsureLootInitialized() override {
+		if (Super::EnsureLootInitialized()) {
+			autoEquip();
+			return true;
+		}
+		return false;
+	}
+	
 
+	virtual void Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents=true);
 
-	void Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents=true);
+	virtual void Unequip(const UClothingItem* type, UItemInstance* item, bool fireEvents = true);
 
-	void Unequip(const UClothingItem* type, UItemInstance* item, bool fireEvents = true);
+	virtual void UnequipAll(bool fireEvents = true);
 
-	void UnequipAll(bool fireEvents = true);
+	FOnItemEquippedSignature ItemEquippedListeners;
+
+	FOnItemEquippedSignature ItemUnequippedListeners;
 
 	UPROPERTY()
 	TArray<FEquippedClothes> ClothesMeshes;
 
 	UPROPERTY()
-	UInventory* inventory;
-
-	UPROPERTY()
 	USkeletalMeshComponent* CharacterMesh;
 	
-
 	bool canEquipClothes(const UClothingItem* type) const
 	{
 		return (OccupiedClothingSlots & uint8(type->Slot)) == 0;
@@ -85,11 +95,18 @@ public:
 	}
 
 	void autoEquip();
-private:
-	void RemoveItem(UItemInstance* item, bool fireEvents);
 
-	void OnInventoryCleared(UInventory* inv) {
-		UnequipAll(false);
+	virtual void onItemCompleteRemoval(UItemInstance* item, bool fireEvents) override {
+		RemoveClothingMesh(item, fireEvents);
 	}
+
+	virtual void clearInventory() override {
+		UnequipAll(false);
+		Super::clearInventory();
+	}
+private:
+	void RemoveClothingMesh(UItemInstance* item, bool fireEvents);
+
+	
 
 };

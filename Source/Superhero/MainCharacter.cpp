@@ -6,8 +6,7 @@
 
 AMainCharacter::AMainCharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvancedMovementComponent>(CharacterMovementComponentName)) {
 
-	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
-	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Clothing"));
+	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Inventory"));
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
 }

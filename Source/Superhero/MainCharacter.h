@@ -25,11 +25,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSoftObjectPtr<class UDialogueStage> DialogueStage;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UClothingSystem* ClothingSys;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
-	UInventory* Inventory;
+	UClothingSystem* ClothingSys;
 
 
 	virtual void OnDialogueEntered_Implementation(APlayerController* Player) override;

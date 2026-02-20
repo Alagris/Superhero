@@ -11,7 +11,7 @@ bool UClothingItem::use(AActor* target, UItemInstance * instance) const
 {
 	UClothingSystem* c = target->GetComponentByClass<UClothingSystem>();
 	if (IsValid(c)) {
-		if (!instance->IsOwnedBy(c->inventory)) {
+		if (!instance->IsOwnedBy(c)) {
 			instance->takeFromOwner();
 		}
 		if (instance->EquippedAt == -1) {
@@ -29,8 +29,7 @@ bool UClothingItem::use(AActor* target, UItemInstance * instance) const
 void UClothingItem::restore(UItemInstance* instance,class USpudState* State, class USpudStateCustomData* CustomData) const
 {
 	if (instance->EquippedAt>-1 && IsValid(instance->Owner)) {
-		UClothingSystem* c = instance->Owner->GetOwner()->GetComponentByClass<UClothingSystem>();
-		if (IsValid(c)) {
+		if (UClothingSystem* c = Cast<UClothingSystem>(instance->Owner)) {
 			c->Equip(this, instance, false);
 		}
 	}
@@ -39,8 +38,7 @@ void UClothingItem::restore(UItemInstance* instance,class USpudState* State, cla
 void UClothingItem::onRemovedFromInventory(UItemInstance* instance) const
 {
 	if (IsValid(instance->Owner)) {
-		UClothingSystem* c = instance->Owner->GetOwner()->GetComponentByClass<UClothingSystem>();
-		if (IsValid(c)) {
+		if (UClothingSystem* c = Cast<UClothingSystem>(instance->Owner)) {
 			c->Unequip(this, instance);
 		}
 	}

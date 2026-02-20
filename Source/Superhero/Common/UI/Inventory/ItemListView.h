@@ -13,5 +13,10 @@ UCLASS()
 class SUPERHERO_API UItemListView : public UListView
 {
 	GENERATED_BODY()
+public:
+	class UInventoryMenu* Root;
+
+	class UInventory* Inv;
+	
 	
 };

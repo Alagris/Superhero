@@ -50,7 +50,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact_Implementation(AActor* p) override {
+	virtual void OnInteract_Implementation(AActor* actor, class UItemInstance* item, const struct FHitResult& Hit) override {
 		if (bIsOpen) {
 			bIsOpen = false;
 			OnClose();

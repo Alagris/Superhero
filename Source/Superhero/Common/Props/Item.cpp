@@ -1,11 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Common/Props/Item.h"
+#include "Item.h"
+#include "Actor/ItemActorStatic.h"
+#include "Actor/ItemActorSkeletal.h"
 #include "Common/Inventory/Inventory.h"
 #include "Common/Inventory/ItemInstance.h"
 
-UItemInstance * UItem::spawn(UObject* outer, int count) const
+UItemInstance * UItem::create(UObject* outer, int count) const
 {
 	UItemInstance * p = NewObject<UItemInstance>(outer, UItemInstance::StaticClass());
 	p->ItemType = this;
@@ -17,6 +19,14 @@ UItemInstance * UItem::spawn(UObject* outer, int count) const
 void UItem::sample(UInventory* inv, int count)
 {
 	if (count > 0) {
-		inv->addItem(spawn(inv->GetWorld(), count));
+		inv->addItem(create(inv->GetWorld(), count));
+	}
+}
+
+AItemActor* UItem::spawn(UWorld* world, class UItemInstance* instance, FTransform trans) const {
+	if (isSkeletal()) {
+		return AItemActorSkeletal::spawn(world, instance, trans);
+	}else{
+		return AItemActorStatic::spawn(world, instance, trans);
 	}
 }

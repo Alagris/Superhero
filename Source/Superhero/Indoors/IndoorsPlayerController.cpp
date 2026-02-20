@@ -156,7 +156,7 @@ void AIndoorsPlayerController::OnLeftClick(const FInputActionValue& Value)
 		if (GetHitResultUnderCursor(ECC_Visibility, true, hit)) {
 			AActor * a = hit.GetActor();
 			if (a!=nullptr && a->Implements<UInteractable>()) {
-				IInteractable::Execute_Interact(a, this);
+				IInteractable::Execute_OnInteract(a, this, nullptr, hit);
 			}
 		}
 		

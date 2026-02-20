@@ -18,6 +18,6 @@ class SUPERHERO_API IInteractable
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interaction")
-	void Interact(AActor* actor);
+	void OnInteract(AActor* actor, class UItemInstance* item, const struct FHitResult & Hit);
 	
 };

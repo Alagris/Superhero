@@ -21,19 +21,21 @@ class SUPERHERO_API UInteractPhysicsHandleComponent : public UPhysicsHandleCompo
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AActor* InteractedActor;
 public:
+	UPROPERTY()
+	FHitResult HitResult;
 
 	/** Called for interaction input */
-	void InteractTriggered() {
+	void InteractTriggered(class UItemInstance * item=nullptr) {
 		if (InteractedActor != nullptr && InteractedActor->Implements<UInteractable>()) {
-			IInteractable::Execute_Interact(InteractedActor, GetOwner());
+			IInteractable::Execute_OnInteract(InteractedActor, GetOwner(), item, HitResult);
 		}
 	}
 
-	void InteractStart(FHitResult OutHit) {
-		InteractedActor = OutHit.GetActor();
-		auto h = OutHit.GetHitObjectHandle();
-		auto c = OutHit.GetComponent();
-		physicshandleDistance = OutHit.Distance;
+	void InteractStart() {
+		InteractedActor = HitResult.GetActor();
+		auto h = HitResult.GetHitObjectHandle();
+		auto c = HitResult.GetComponent();
+		physicshandleDistance = HitResult.Distance;
 		GrabComponentAtLocationWithRotation(c, "", h.GetLocation(), h.GetRotation());
 	}
 

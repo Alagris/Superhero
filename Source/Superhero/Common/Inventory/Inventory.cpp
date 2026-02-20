@@ -57,27 +57,8 @@ void UInventory::addItem(UItemInstance* item)
 	}
 }
 
-UItemInstance* UInventory::spawnItem(const UItem* itemType, int quantity)
-{
-	UItemInstance* item = itemType->spawn(GetWorld(), quantity);
-	addItem(item);
-	return item;
-}
 
-UItemInstance* UInventory::removeItem(UItemInstance* item) {
-	
-	FSetElementId id = Items.FindId(item->ItemType);
-	if (id.IsValidId()) {
-		TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
-		if (item == i.Value) {
-			Items.Remove(id);
-			item->Owner = nullptr;
-			ItemRemovedListeners.Broadcast(item, this);
-		}
-	}
-	return item;
-}
-UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spawnPopped)
+UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spawnPopped, bool fireEvents)
 {
 	if (quantity > 0) {
 		FSetElementId id = Items.FindId(item);
@@ -87,7 +68,10 @@ UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spaw
 			if (popped == i.Value) {
 				Items.Remove(id);
 				popped->Owner = nullptr;
-				ItemRemovedListeners.Broadcast(i.Value, this);
+				onItemCompleteRemoval(popped, fireEvents);
+				if (fireEvents) {
+					ItemRemovedListeners.Broadcast(i.Value, this);
+				}
 				
 			}
 			
