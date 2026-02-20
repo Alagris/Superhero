@@ -46,7 +46,7 @@ class AThirdPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	UInteractPhysicsHandleComponent * PhysicsHandle;
 	
-	
+	virtual void Tick(float DeltaTime) override;
 
 public:
 

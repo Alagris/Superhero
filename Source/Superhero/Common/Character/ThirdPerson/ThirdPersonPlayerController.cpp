@@ -23,12 +23,14 @@ void AThirdPersonPlayerController::SetupInputComponent()
 	
 	DefaultMappingContext = NewObject<UThirdPersonInputMappingContext>(this);
 	DefaultMappingContext->setMapping(this);
+
+	
 }
 
 void AThirdPersonPlayerController::SetPawn(APawn* pawn)
 {
 	Super::SetPawn(pawn);
-
+	
 	ThirdPersonCharacter = Cast<AThirdPersonCharacter>(pawn);
 	if (ThirdPersonCharacter) {
 		//ThirdPersonCharacter->OnPossess(this);
@@ -36,20 +38,29 @@ void AThirdPersonPlayerController::SetPawn(APawn* pawn)
 
 			EnhancedInputComponent->ClearActionBindings();
 			// Looking
-			EnhancedInputComponent->BindAction(DefaultMappingContext->LookAction, ETriggerEvent::Triggered, this, &AThirdPersonPlayerController::Look);
-			DefaultMappingContext->BindToThirdPerson(EnhancedInputComponent, ThirdPersonCharacter);
+			EnhancedInputComponent->BindAction(DefaultMappingContext->LookAction, ETriggerEvent::Triggered, this, &AThirdPersonPlayerController::Look);			
+			EnhancedInputComponent->BindAction(DefaultMappingContext->OpenInvAction, ETriggerEvent::Completed, this, &AThirdPersonPlayerController::TriggerInventory);
+			EnhancedInputComponent->BindAction(DefaultMappingContext->PauseGameAction, ETriggerEvent::Completed, this, &AThirdPersonPlayerController::TriggerPauseGame);
 			
-
-
-
+			DefaultMappingContext->BindToThirdPerson(EnhancedInputComponent, ThirdPersonCharacter);
 		}
 	}
 }
-void AThirdPersonPlayerController::TriggerPauseGame(const FInputActionValue& Value) {
+
+void AThirdPersonPlayerController::TriggerPauseGame(const FInputActionValue& Value)
+{
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		hud->triggerPauseGame(this);
+		hud->TriggerPauseGame(Value);
 	}
 }
+
+void AThirdPersonPlayerController::TriggerInventory(const FInputActionValue& Value)
+{
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		hud->TriggerInventory(Value);
+	}
+}
+
 void AThirdPersonPlayerController::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();

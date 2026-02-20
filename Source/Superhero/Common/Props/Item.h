@@ -28,6 +28,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float Value = 0;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Weight = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UStaticMesh> Mesh;
@@ -69,6 +71,10 @@ public:
 	virtual void onAddedToInventory(class UItemInstance* instance) const {}
 
 	virtual void onRemovedFromInventory(class UItemInstance* instance) const{}
+
+	virtual float getArmor()const { return 0; }
+
+	virtual float getDamage() const { return 0; }
 
 	void applyMaterials(UMeshComponent * c) const{
 		if (c != nullptr) {

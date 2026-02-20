@@ -25,6 +25,16 @@ class SUPERHERO_API UInventoryMenu : public UUserWidget
 	virtual void NativeConstruct() override;
 
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+	virtual void BeginDestroy() override {
+		Super::BeginDestroy();
+		if (NpcInv != nullptr) {
+			NpcInv->InventoryWidget = nullptr;
+		}
+		if (PlayerInv != nullptr) {
+			PlayerInv->InventoryWidget = nullptr;
+		}
+	}
 public:
 
 	UPROPERTY()
@@ -88,6 +98,12 @@ public:
 		}
 	}
 	void updateItem(UItemInstance* item);
+	void clearItems();
+	void addAllItems();
+	void resetItems() {
+		clearItems();
+		addAllItems();
+	}
 protected:
 	virtual void setPlayerSelected(bool playerSelected);
 	virtual bool openCrafting() {

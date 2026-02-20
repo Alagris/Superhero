@@ -27,7 +27,7 @@ void UPauseMenu::setupController(AGameHUD* hud,APlayerController* controller)
 void UPauseMenu::OnResume()
 {
 	if (IsValid(Controller)) {
-		HUD->hidePauseMenu(Controller);
+		HUD->hidePauseMenu();
 	}
 }
 

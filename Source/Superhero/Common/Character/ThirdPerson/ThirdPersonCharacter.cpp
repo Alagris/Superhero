@@ -16,6 +16,14 @@
 
 DEFINE_LOG_CATEGORY(LogThirdPersonCharacter);
 
+void AThirdPersonCharacter::Tick(float DeltaTime)
+{
+	if (PhysicsHandle->physicshandleDistance > 0) {
+		FVector pos = getRayEnd(PhysicsHandle->physicshandleDistance);
+		PhysicsHandle->SetTargetLocation(pos);
+	}
+}
+
 AThirdPersonCharacter::AThirdPersonCharacter(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer)
 {
 	// Set size for collision capsule

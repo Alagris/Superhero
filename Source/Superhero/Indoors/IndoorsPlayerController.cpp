@@ -180,14 +180,14 @@ void AIndoorsPlayerController::EndRightClick(const FInputActionValue& Value)
 void AIndoorsPlayerController::TriggerPauseGame()
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		hud->triggerPauseGame(this);
+		hud->triggerPauseGame();
 	}	
 }
 
 bool AIndoorsPlayerController::PauseGame()
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		return hud->showPauseMenu(this);
+		return hud->showPauseMenu();
 	}
 	return false;
 }
@@ -195,7 +195,7 @@ bool AIndoorsPlayerController::PauseGame()
 bool AIndoorsPlayerController::UnpauseGame()
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		return hud->hidePauseMenu(this);
+		return hud->hidePauseMenu();
 	}
 	return false;
 }
@@ -203,7 +203,7 @@ bool AIndoorsPlayerController::UnpauseGame()
 bool AIndoorsPlayerController::OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		hud->showDialogue(PlayerController, Npc, Stage);
+		hud->showDialogue( Npc, Stage);
 	}
 	return false;
 
@@ -212,13 +212,13 @@ void AIndoorsPlayerController::OnSuperHeroSelected(AIndoorsSuperhero* hero)
 {
 	SelectedHero = hero;
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		hud->showCharacterMenu(this, hero);
+		hud->showCharacterMenu(hero);
 	}
 }
 bool AIndoorsPlayerController::CloseDialogue()
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
-		return hud->hideDialogue(this);		
+		return hud->hideDialogue();		
 	}
 	return false;
 }

@@ -52,6 +52,10 @@ public:
 	UPROPERTY()
 	UInputAction* InteractAction;
 
+	/** Attack Input Action */
+	UPROPERTY()
+	UInputAction* OpenInvAction;
+
 	virtual void initialize(APlayerController* c) override{
 		MoveAction = moveKeys(c);
 		LookAction = lookKeys(c);
@@ -62,6 +66,7 @@ public:
 		ZoomAction = makeZoomAction(c);
 		CrouchAction = makeCrouchAction(c);
 		PauseGameAction = makePauseGameAction(c);
+		OpenInvAction = makeOpenInvAction(c);
 
 	}
 	virtual void setMapping(APlayerController* c)override {

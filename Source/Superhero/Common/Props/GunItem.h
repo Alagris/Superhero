@@ -18,5 +18,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<USkeletalMesh> RiggedMesh;
 
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Damage = 0;
+
+	virtual float getDamage() const { return Damage; }
 };

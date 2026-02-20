@@ -2,6 +2,7 @@
 
 
 #include "Common/Inventory/Inventory.h"
+#include "Common/UI/Inventory/InventoryMenu.h"
 
 // Sets default values for this component's properties
 UInventory::UInventory()
@@ -49,9 +50,13 @@ void UInventory::addItem(UItemInstance* item)
 		if (val == item) {
 			item->Owner = this;
 			val = item;
+			if (IsValid(InventoryWidget)) {
+				InventoryWidget->addItem(val);
+			}
 		}
 		else {
 			val->Count += item->Count;
+			RefreshItemInInventoryMenu(val);
 		}
 		ItemAddedListeners.Broadcast(val, this);
 	}
@@ -72,7 +77,12 @@ UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spaw
 				if (fireEvents) {
 					ItemRemovedListeners.Broadcast(i.Value, this);
 				}
-				
+				if (IsValid(InventoryWidget)) {
+					InventoryWidget->removeItem(i.Value);
+				}
+			}
+			else {
+				RefreshItemInInventoryMenu(i.Value);
 			}
 			
 			return popped;
@@ -97,8 +107,18 @@ UItemInstance* UInventory::useItem(const UItem* item, int quantity)
 	return nullptr;
 }
 
+void UInventory::RefreshItemInInventoryMenu(UItemInstance* item)
+{
+	if (IsValid(InventoryWidget)) {
+		InventoryWidget->updateItem(item);
+	}
+}
+
 void UInventory::clearInventory()
 {
+	if (IsValid(InventoryWidget)) {
+		InventoryWidget->clearItems();
+	}
 	ClearListeners.Broadcast(this);
 	Items.Empty();
 }
@@ -108,6 +128,9 @@ void UInventory::resetInventory()
 	clearInventory();
 	if (IsValid(Loot)) {
 		Loot->sample(this, 1);
+		if (IsValid(InventoryWidget)) {
+			InventoryWidget->addAllItems();
+		}
 	}
 }
 

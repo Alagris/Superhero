@@ -10,13 +10,13 @@
 void UItemListEntry::NativeConstruct()
 {
 	Super::NativeConstruct();
+	UListViewBase* owner = GetOwningListView();
+	Parent = Cast<UItemListView>(owner);
+	check(IsValid(Parent));
 }
 
 void UItemListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
 {
-	UListViewBase* owner = GetOwningListView();
-	Parent = Cast<UItemListView>(owner);
-	check(IsValid(Parent));
 	if (IsValid(Item = Cast<UItemInstance>(ListItemObject))) {
 		RefreshItem();
 	}
@@ -51,6 +51,9 @@ void UItemListEntry::NativeOnMouseEnter(const FGeometry& InGeometry, const FPoin
 
 void UItemListEntry::RefreshItem_Implementation()
 {
+	if (IsValid(Item)) {
+		ItemName->SetText(Item->getName());
+	}
 }
 
 void UItemListEntry::UseItem()

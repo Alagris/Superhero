@@ -42,7 +42,7 @@ void UDialogue::closeDialogue()
 {
 	
 	IDialogueActor::Execute_OnDialogueExited(ResponseOptions->Npc.GetObject(), ResponseOptions->PlayerController);
-	HUD->hideDialogue(ResponseOptions->PlayerController);
+	HUD->hideDialogue();
 }
 
 void UDialogue::followUp(TSoftObjectPtr<UDialogueStage> Stage)

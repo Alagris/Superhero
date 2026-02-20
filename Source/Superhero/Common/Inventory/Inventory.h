@@ -68,6 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	class ULoot* Loot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
+	float Money;
+
 	FOnItemAddedSignature ItemAddedListeners;
 
 	FOnItemRemovedSignature ItemRemovedListeners;
@@ -127,7 +130,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual UItemInstance* useItem(const UItem* item, int quantity);
 
-	
+	void RefreshItemInInventoryMenu(UItemInstance* item);
 
 	virtual void clearInventory();
 	virtual void resetInventory();

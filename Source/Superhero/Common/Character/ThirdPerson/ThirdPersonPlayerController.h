@@ -34,7 +34,9 @@ protected:
 
 	virtual void SetPawn(APawn* pawn) override;
 
-	void TriggerPauseGame(const FInputActionValue& Value);
+	void TriggerPauseGame(const struct FInputActionValue& Value);
+
+	void TriggerInventory(const struct FInputActionValue& Value);
 
 	AThirdPersonCharacter* ThirdPersonCharacter;
 

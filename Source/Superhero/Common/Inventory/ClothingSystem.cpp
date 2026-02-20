@@ -71,6 +71,7 @@ void UClothingSystem::UnequipAll(bool fireEvents)
 		UItemInstance* j = ClothesMeshes[i].Item;
 		destroySkeletalMeshComponent(ClothesMeshes[i].Mesh);
 		j->EquippedAt = -1;
+		RefreshItemInInventoryMenu(j);
 		if (fireEvents) {
 			ItemUnequippedListeners.Broadcast(t, j, this);
 		}
@@ -98,6 +99,7 @@ void UClothingSystem::Equip(const UClothingItem* type, UItemInstance* item, bool
 				item->EquippedAt = ClothesMeshes.Add(FEquippedClothes(clothingComp, type, item));
 				OccupiedClothingSlots |= s8;
 				if (type->IsDevious) OccupiedDeviousClothingSlots |= s8;
+				RefreshItemInInventoryMenu(item);
 				if (fireEvents) {
 					ItemEquippedListeners.Broadcast(type, item, this);
 				}
@@ -123,6 +125,7 @@ void UClothingSystem::RemoveClothingMesh(UItemInstance* item, bool fireEvents)
 		ClothesMeshes.RemoveAtSwap(idx);
 		item->EquippedAt = -1;
 		OccupiedClothingSlots &= ~type->slot();
+		RefreshItemInInventoryMenu(item);
 		if (fireEvents ) {
 			ItemUnequippedListeners.Broadcast(type, item, this);
 		}

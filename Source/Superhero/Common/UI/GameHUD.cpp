@@ -4,9 +4,18 @@
 #include "Common/UI/GameHUD.h"
 
 
-bool AGameHUD::showInventoryMenu(APlayerController* PlayerController, UInventory* Inv)
+void AGameHUD::BeginPlay()
 {
+	if (StatusWidget) {
+		StatusWidget->AddToViewport(999);
+	}
+}
+
+bool AGameHUD::showInventoryMenu(UInventory* Inv)
+{
+	
 	if (InventoryMenuWidget == nullptr && IsValid(InventoryMenuClass)) {
+		APlayerController* PlayerController = GetOwningPlayerController();
 		InventoryMenuWidget = CreateWidget<UInventoryMenu>(GetWorld(), InventoryMenuClass);
 		InventoryMenuWidget->setup(this, PlayerController, Inv);
 		InventoryMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
@@ -18,13 +27,15 @@ bool AGameHUD::showInventoryMenu(APlayerController* PlayerController, UInventory
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(true);
 		PlayerController->SetPause(true);
+		setStatus();
 	}
 	return false;
 }
 
-bool AGameHUD::showCharacterMenu(APlayerController* PlayerController, AIndoorsSuperhero* Hero)
+bool AGameHUD::showCharacterMenu( AIndoorsSuperhero* Hero)
 {
 	if (CharacterMenuWidget == nullptr && IsValid(CharacterMenuWidgetClass)) {
+		APlayerController* PlayerController = GetOwningPlayerController();
 		CharacterMenuWidget = CreateWidget<UCharacterMenu>(GetWorld(), CharacterMenuWidgetClass);
 		CharacterMenuWidget->setup(this, PlayerController, Hero);
 		CharacterMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
@@ -34,13 +45,15 @@ bool AGameHUD::showCharacterMenu(APlayerController* PlayerController, AIndoorsSu
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 		Mode.SetWidgetToFocus(CharacterMenuWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
+		setStatus();
 	}
 	return false;
 }
 
-bool AGameHUD::showDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
+bool AGameHUD::showDialogue( TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
 	if (DialogueWidget == nullptr && IsValid(DialogueWidgetClass)) {
+		APlayerController* PlayerController = GetOwningPlayerController();
 		DialogueWidget = CreateWidget<UDialogue>(GetWorld(), DialogueWidgetClass);
 		DialogueWidget->setup(this, PlayerController, Npc, Stage);
 		DialogueWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
@@ -51,39 +64,61 @@ bool AGameHUD::showDialogue(APlayerController* PlayerController, TScriptInterfac
 		Mode.SetWidgetToFocus(DialogueWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(true);
+		setStatus();
 		return true;
 		
 	}
 	return false;
 }
-void AGameHUD::triggerPauseGame(APlayerController* PlayerController)
+
+void AGameHUD::triggerInventory()
 {
-	if (isDialogueOpen()) {
-		hideDialogue(PlayerController);
-	}
-	else if (isPauseMenuOpen()) {
-		hidePauseMenu(PlayerController);
-	}
-	else {
-		showPauseMenu(PlayerController);
+	if (!isPauseMenuOpen()) {
+		if (isInventoryMenuOpen()) {
+			hideInventoryMenu();
+		}
+		else {
+			if (UInventory* inv = GetOwningPawn()->GetComponentByClass<UInventory>()) {
+				showInventoryMenu(inv);
+			}
+		}
 	}
 }
-bool AGameHUD::hideDialogue(APlayerController* PlayerController)
+void AGameHUD::triggerPauseGame()
+{
+	if (isInventoryMenuOpen()) {
+		hideInventoryMenu();
+	}
+	else if (isDialogueOpen()) {
+		hideDialogue();
+	}
+	else if (isPauseMenuOpen()) {
+		hidePauseMenu();
+	}
+	else {
+		showPauseMenu();
+	}
+}
+bool AGameHUD::hideDialogue()
 {
 	if (DialogueWidget != nullptr) {
+		APlayerController* PlayerController = GetOwningPlayerController();
 		DialogueWidget->RemoveFromParent();
 		DialogueWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(false);
+		setStatus();
 		return true;
+
 	}
 	return false;
 }
 
-bool AGameHUD::showPauseMenu(APlayerController* controller)
+bool AGameHUD::showPauseMenu()
 {
 	if (PauseMenuWidget == nullptr && IsValid(PauseMenuWidgetClass)) {
+		APlayerController* controller = GetOwningPlayerController();
 		PauseMenuWidget = CreateWidget<UPauseMenu>(GetWorld(), PauseMenuWidgetClass);
 		PauseMenuWidget->setupController(this, controller);
 		PauseMenuWidget->AddToViewport(9999); // Z-order, this just makes it render on the very top.
@@ -96,38 +131,39 @@ bool AGameHUD::showPauseMenu(APlayerController* controller)
 		controller->SetInputMode(Mode);
 		controller->SetShowMouseCursor(true);
 		controller->SetPause(true);
+		setStatus();
 		return true;
 	}
 	return false;
 }
 
-bool AGameHUD::hidePauseMenu(APlayerController* PlayerController)
+bool AGameHUD::hidePauseMenu()
 {
 	if (PauseMenuWidget != nullptr) {
+		APlayerController* PlayerController = GetOwningPlayerController();
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(false);
 		PlayerController->SetPause(false);
+		setStatus();
 		return true;
 	}
 	return false;
 }
 
-bool AGameHUD::hideInventoryMenu(APlayerController* PlayerController)
+bool AGameHUD::hideInventoryMenu()
 {
 	if (InventoryMenuWidget != nullptr) {
-		if (InventoryMenuWidget->NpcInv != nullptr) {
-			InventoryMenuWidget->NpcInv->InventoryWidget = nullptr;
-		}
-		InventoryMenuWidget->PlayerInv->InventoryWidget = nullptr;
+		APlayerController* PlayerController = GetOwningPlayerController();
 		InventoryMenuWidget->RemoveFromParent();
 		InventoryMenuWidget = nullptr;
 		FInputModeGameOnly Mode;
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(false);
 		PlayerController->SetPause(false);
+		setStatus();
 		return true;
 	}
 	return false;

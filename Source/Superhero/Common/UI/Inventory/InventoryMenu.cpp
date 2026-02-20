@@ -8,13 +8,14 @@
 
 void UInventoryMenu::NativeConstruct()
 {
+    ItemListView->Root = this;
 }
 
 FReply UInventoryMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
     const FKey key = InKeyEvent.GetKey();
     if (key == EKeys::C || key == EKeys::Escape) {
-        Hud->hideInventoryMenu(PlayerController);
+        Hud->hideInventoryMenu();
         return FReply::Handled();
     }
     else if (key == EKeys::R) {
@@ -60,6 +61,19 @@ void UInventoryMenu::updateItem(UItemInstance* item)
     }
 }
 
+void UInventoryMenu::clearItems()
+{
+    ItemListView->ClearListItems();
+}
+
+void UInventoryMenu::addAllItems()
+{
+    for (auto& entry : ItemListView->Inv->Items) {
+        ItemListView->AddItem(entry.Value);
+    }
+
+}
+
 void UInventoryMenu::setPlayerSelected(bool playerSelected)
 {
     check(playerSelected || NpcInv != nullptr);
@@ -69,9 +83,6 @@ void UInventoryMenu::setPlayerSelected(bool playerSelected)
     if (NpcInv != nullptr)NpcInv->InventoryWidget = playerSelected ? nullptr : this;
     check(inv != nullptr);
     ItemListView->Inv = inv;
-    ItemListView->ClearListItems();
-    for (auto& entry : inv->Items) {
-        ItemListView->AddItem(entry.Value);
-    }
-    
+    resetItems();
+   
 }

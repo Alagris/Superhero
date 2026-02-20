@@ -15,12 +15,14 @@ class SUPERHERO_API UInteractPhysicsHandleComponent : public UPhysicsHandleCompo
 {
 	GENERATED_BODY()
 
+public:
+
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	double physicshandleDistance = -1;
 
 	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	AActor* InteractedActor;
-public:
+
 	UPROPERTY()
 	FHitResult HitResult;
 

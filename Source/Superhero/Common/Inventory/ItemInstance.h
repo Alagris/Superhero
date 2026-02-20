@@ -31,6 +31,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class UInventory* Owner;
 
+	const FText& getName()const {
+		return ItemType->Name;
+	}
+	const FText& getDescr()const {
+		return ItemType->Description;
+	}
 	bool isSkeletal() const {
 		return ItemType->isSkeletal();
 	}

@@ -20,7 +20,8 @@ void UThirdPersonInputMappingContext::BindToThirdPerson(UEnhancedInputComponent*
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, a, &AThirdPersonCharacter::TriggerInteractEnd);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Canceled, a, &AThirdPersonCharacter::TriggerInteractEnd);
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, a, &AThirdPersonCharacter::TriggerCrouch);
-	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, a, &AThirdPersonCharacter::TriggerUncrouch);
+	
+	
 	if (UAdvancedMovementComponent* m = Cast<UAdvancedMovementComponent>(a->GetCharacterMovement())) {
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, m, &UAdvancedMovementComponent::TriggerStartRun);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, m, &UAdvancedMovementComponent::TriggerEndRun);

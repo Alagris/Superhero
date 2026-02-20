@@ -36,6 +36,7 @@ public:
 	UInputAction* makeZoomAction(UObject* Outer) { return mapKey(Outer,EKeys::MouseWheelAxis, EInputActionValueType::Axis1D); }
 	UInputAction* makeCrouchAction(UObject* Outer) { return mapKey(Outer,EKeys::LeftControl); }
 	UInputAction* makePauseGameAction(UObject* Outer) { return mapKey(Outer,EKeys::Escape, EInputActionValueType::Boolean, true); }
+	UInputAction* makeOpenInvAction(UObject* Outer) { return mapKey(Outer, EKeys::C, EInputActionValueType::Boolean, true); }
 	void mapKey(UInputAction* act, FKey key, bool negateX, bool negateY, bool negateZ);
 	void mapKey(UInputAction* act, FKey key, bool negate = false, bool swizzle = false, EInputAxisSwizzle order = EInputAxisSwizzle::YXZ);
 	virtual void initialize(APlayerController* c) {};

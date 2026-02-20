@@ -24,9 +24,16 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool IsUnderwear = false;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Armor = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EClothingSlot Slot = EClothingSlot::NONE;
+
+
+	virtual float getArmor() const override { return Armor; }
+
 
 	uint8 slot() const{
 		return uint8(Slot);

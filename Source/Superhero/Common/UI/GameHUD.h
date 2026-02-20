@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "Dialogue/Dialogue.h"
 #include "PauseMenu/PauseMenu.h"
+#include "Status/Status.h"
 #include "CharacterMenu/CharacterMenu.h"
 #include "Inventory/InventoryMenu.h"
 #include "GameHUD.generated.h"
@@ -20,6 +21,9 @@ class SUPERHERO_API AGameHUD : public AHUD
 {
 	GENERATED_BODY()
 
+	virtual void BeginPlay() override;
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "User Interface")
 	TSubclassOf<UDialogue> DialogueWidgetClass;
 
@@ -31,6 +35,9 @@ class SUPERHERO_API AGameHUD : public AHUD
 
 	UPROPERTY(EditDefaultsOnly, Category = "User Interface")
 	TSubclassOf<UInventoryMenu> InventoryMenuClass;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UStatus> StatusWidget;
 
 	UPROPERTY()
 	TObjectPtr<UDialogue> DialogueWidget;
@@ -45,21 +52,31 @@ class SUPERHERO_API AGameHUD : public AHUD
 	TObjectPtr<UInventoryMenu> InventoryMenuWidget;
 
 public:
-	bool showInventoryMenu(APlayerController* PlayerController, class UInventory* Inv);
+	void TriggerPauseGame(const struct FInputActionValue& Value) {
+		triggerPauseGame();
+	}
 
-	bool showCharacterMenu(APlayerController* PlayerController, class AIndoorsSuperhero * Hero);
+	void TriggerInventory(const struct FInputActionValue& Value) {
+		triggerInventory();
+	}
 
-	bool showDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
+	bool showInventoryMenu( class UInventory* Inv);
 
-	void triggerPauseGame(APlayerController* PlayerController);
+	bool showCharacterMenu( class AIndoorsSuperhero * Hero);
 
-	bool hideDialogue(APlayerController* PlayerController);
+	bool showDialogue( TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
 
-	bool showPauseMenu(APlayerController* controller);
+	void triggerInventory();
 
-	bool hidePauseMenu(APlayerController* PlayerController);
+	void triggerPauseGame();
 
-	bool hideInventoryMenu(APlayerController* PlayerController);
+	bool hideDialogue();
+
+	bool showPauseMenu();
+
+	bool hidePauseMenu();
+
+	bool hideInventoryMenu();
 	
 	inline bool canOpenInventoryMenu() {
 		return IsValid(InventoryMenuClass);
@@ -83,5 +100,15 @@ public:
 
 	inline bool isDialogueOpen() {
 		return IsValid(DialogueWidget);
+	}
+private:
+	void setStatus() {
+		if (IsValid(StatusWidget)) {
+			bool anyOpen = isDialogueOpen()
+				|| isInventoryMenuOpen()
+				|| isPauseMenuOpen();
+
+			StatusWidget->SetVisibility(anyOpen ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+		}
 	}
 };
