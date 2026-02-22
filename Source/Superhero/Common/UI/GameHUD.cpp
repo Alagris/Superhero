@@ -41,7 +41,7 @@ bool AGameHUD::showInventoryMenu(UInventory* Inv)
 
 		FInputModeGameAndUI Mode;
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
-		Mode.SetWidgetToFocus(InventoryMenuWidget->TakeWidget());
+		//Mode.SetWidgetToFocus(InventoryMenuWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(true);
 		PlayerController->SetPause(true);
@@ -61,7 +61,7 @@ bool AGameHUD::showCharacterMenu( AIndoorsSuperhero* Hero)
 
 		FInputModeGameAndUI Mode;
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
-		Mode.SetWidgetToFocus(CharacterMenuWidget->TakeWidget());
+		//Mode.SetWidgetToFocus(CharacterMenuWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
 		setStatus();
 	}

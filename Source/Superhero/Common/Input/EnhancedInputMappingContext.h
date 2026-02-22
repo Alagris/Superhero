@@ -28,6 +28,8 @@ public:
 	UInputAction* makeSlowWalkAction(UObject* Outer) { return mapKey(Outer,EKeys::V); }
 	UInputAction* makeRunAction(UObject* Outer) { return mapKey(Outer,EKeys::LeftShift); }
 	UInputAction* makeJumpAction(UObject* Outer) { return mapKey(Outer,EKeys::SpaceBar); }
+	UInputAction* makeLeftHandedContinuousAttackAction(UObject* Outer) { return mapKey(Outer, EKeys::LeftMouseButton); }
+	UInputAction* makeRightHandedContinuousAttackAction(UObject* Outer) { return mapKey(Outer, EKeys::RightMouseButton); }
 	UInputAction* makeLeftHandedLightAttackAction(UObject* Outer,float timeThreshold) { return mapTapKey(Outer,EKeys::LeftMouseButton, timeThreshold); }
 	UInputAction* makeRightHandedLightAttackAction(UObject* Outer,float timeThreshold) { return mapTapKey(Outer,EKeys::RightMouseButton, timeThreshold); }
 	UInputAction* makeLeftHandedHeavyAttackAction(UObject* Outer,float timeThreshold) { return mapHoldThenOngoingKey(Outer,EKeys::LeftMouseButton, timeThreshold); }

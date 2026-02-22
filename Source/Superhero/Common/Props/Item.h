@@ -58,6 +58,12 @@ public:
 	}
 	virtual bool use(AActor* target, class UItemInstance* instance) const { return false; };
 
+	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
+
+	virtual bool attackEnd(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
+
+	virtual FName getNextAttackAnimMontage(int & state, bool isHeavy) const { return NAME_None; };
+
 	virtual UItemInstance * create(UObject* outer, int count = 1) const;
 
 	virtual class AItemActor* spawn(UWorld* world, class UItemInstance* instance, FTransform trans) const;

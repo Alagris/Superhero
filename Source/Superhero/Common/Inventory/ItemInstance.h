@@ -63,9 +63,18 @@ public:
 	inline bool use(AActor * target) {
 		return ItemType->use(target, this);
 	}
+	inline bool attackStart(bool isPrimary, bool isHeavy) { 
+		return ItemType->attackStart(this, isPrimary, isHeavy);
+	}
+	inline bool attackEnd( bool isPrimary, bool isHeavy) {
+		return ItemType->attackEnd(this, isPrimary, isHeavy);
+	}
 	bool setAnyMesh(struct FAnyMesh& m, UObject* outer) const {
 		return ItemType->setAnyMesh(m, outer);
 	}
+	FName getNextAttackAnimMontage(int& state, bool isHeavy) {
+		return ItemType->getNextAttackAnimMontage(state, isHeavy);
+	};
 
 	UItemInstance* remove(int quantity = 1, bool spawnPopped = true);
 

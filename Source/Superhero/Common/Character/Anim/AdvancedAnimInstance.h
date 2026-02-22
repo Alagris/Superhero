@@ -21,7 +21,16 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 	bool IsLeftLegInFront;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	bool IsAiming;
 	
+	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	float AimPitch;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement)
+	float AimYaw;
+
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 	int LocomotionStyleL;
 

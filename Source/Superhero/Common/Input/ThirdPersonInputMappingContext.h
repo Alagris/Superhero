@@ -54,6 +54,13 @@ public:
 
 	/** Attack Input Action */
 	UPROPERTY()
+	UInputAction* AttackLeftAction;
+
+	UPROPERTY()
+	UInputAction* AttackRightAction;
+
+	/** Attack Input Action */
+	UPROPERTY()
 	UInputAction* OpenInvAction;
 
 	virtual void initialize(APlayerController* c) override{
@@ -67,6 +74,8 @@ public:
 		CrouchAction = makeCrouchAction(c);
 		PauseGameAction = makePauseGameAction(c);
 		OpenInvAction = makeOpenInvAction(c);
+		AttackLeftAction = makeLeftHandedContinuousAttackAction(c);
+		AttackRightAction = makeRightHandedContinuousAttackAction(c);
 
 	}
 	virtual void setMapping(APlayerController* c)override {

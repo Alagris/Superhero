@@ -4,6 +4,7 @@
 #include "Common/Character/ThirdPerson/ThirdPersonCharacter.h"
 #include <EnhancedInputComponent.h>
 #include <Common/Character/Movement/AdvancedMovementComponent.h>
+#include <Common/Inventory/ClothingSystem.h>
 
 
 
@@ -11,8 +12,8 @@ void UThirdPersonInputMappingContext::BindToThirdPerson(UEnhancedInputComponent*
 {
 	
 	
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, a, &AThirdPersonCharacter::Jump);
-	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, a, &AThirdPersonCharacter::StopJumping);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, a, &AThirdPersonCharacter::TriggerJumpStart);
+	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, a, &AThirdPersonCharacter::TriggerJumpEnd);
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, a, &AThirdPersonCharacter::TriggerMove);
 	EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, a, &AThirdPersonCharacter::TriggerCameraZoom);
 	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, a, &AThirdPersonCharacter::TriggerInteract);
@@ -26,6 +27,12 @@ void UThirdPersonInputMappingContext::BindToThirdPerson(UEnhancedInputComponent*
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, m, &UAdvancedMovementComponent::TriggerStartRun);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, m, &UAdvancedMovementComponent::TriggerEndRun);
 		EnhancedInputComponent->BindAction(SlowWalkAction, ETriggerEvent::Started, m, &UAdvancedMovementComponent::ToggleSlowWalk);
+	}
+	if (UClothingSystem* m = a->GetComponentByClass<UClothingSystem>()) {
+		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Started, m, &UClothingSystem::TriggerLeftAttackStart);
+		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Completed, m, &UClothingSystem::TriggerLeftAttackEnd);
+		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Started, m, &UClothingSystem::TriggerRightAttackStart);
+		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Completed, m, &UClothingSystem::TriggerRightAttackEnd);
 	}
 	
 }
