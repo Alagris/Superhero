@@ -69,9 +69,12 @@ UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spaw
 		FSetElementId id = Items.FindId(item);
 		if (id.IsValidId()) {
 			TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
+			bool completeRemoval = i.Value->Count <= quantity;
+			if (i.Value->Count<= quantity) {
+				onItemCompleteRemoval(i.Value, fireEvents);
+			}
 			UItemInstance* popped = i.Value->popCount(GetWorld(), quantity, spawnPopped);
-			if (popped == i.Value) {
-				onItemCompleteRemoval(popped, fireEvents);
+			if (completeRemoval) {
 				Items.Remove(id);
 				popped->Owner = nullptr;
 				if (fireEvents) {

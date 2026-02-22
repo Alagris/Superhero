@@ -15,10 +15,10 @@ struct FAnyMesh {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TObjectPtr<UStaticMeshComponent> ztatic;
+	UStaticMeshComponent * ztatic;
 
 	UPROPERTY()
-	TObjectPtr<USkeletalMeshComponent> skeletal;
+	USkeletalMeshComponent * skeletal;
 	
 	bool isSkeletal;
 

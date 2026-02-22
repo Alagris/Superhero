@@ -36,6 +36,17 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class UInventory* Owner;
 
+	UPROPERTY(BlueprintReadOnly)
+	class USceneComponent* SceneComp;
+
+	void unsetEquipped() {
+		EquippedAt = EQUIPPED_AT_NONE;
+		SceneComp = nullptr;
+	}
+	void setEquipped(int idx, class USceneComponent* c) {
+		EquippedAt = idx;
+		SceneComp = c;
+	}
 	const FText& getName()const {
 		return ItemType->Name;
 	}
@@ -75,6 +86,9 @@ public:
 	FName getNextAttackAnimMontage(int& state, bool isHeavy) {
 		return ItemType->getNextAttackAnimMontage(state, isHeavy);
 	};
+	void attackTrigger(bool isHeavy) {
+		ItemType->attackTrigger(this, isHeavy);
+	}
 
 	UItemInstance* remove(int quantity = 1, bool spawnPopped = true);
 

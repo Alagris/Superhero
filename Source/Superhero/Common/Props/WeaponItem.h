@@ -41,5 +41,7 @@ public:
 
 	virtual void restore(class UItemInstance* instance, class USpudState* State, class USpudStateCustomData* CustomData) const override;
 
-	
+	virtual void equip(UItemInstance* instance, class UClothingSystem* c, bool leftHand) const;
+
+	virtual void unequip(UItemInstance* instance, class UClothingSystem* c, bool leftHand) const;
 };

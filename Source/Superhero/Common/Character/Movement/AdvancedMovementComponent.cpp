@@ -13,6 +13,7 @@ void UAdvancedMovementComponent::ExecuteNextAttack(bool isHeavy)
 			LastPlayerAttackMontage = a->Anim.LoadSynchronous();
 			if (IsValid(LastPlayerAttackMontage)) {
 				CanPlayNextAttack = false;
+				WantsToAttack->attackTrigger(isHeavy);
 				PlayAnimMontage(LastPlayerAttackMontage);
 			}
 		}

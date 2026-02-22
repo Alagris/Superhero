@@ -60,6 +60,8 @@ public:
 
 	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
 
+	virtual void attackTrigger(class UItemInstance* instance, bool isHeavy) const { };
+
 	virtual bool attackEnd(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
 
 	virtual FName getNextAttackAnimMontage(int & state, bool isHeavy) const { return NAME_None; };

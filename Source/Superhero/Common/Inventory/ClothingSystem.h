@@ -52,6 +52,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	int LocomotionStyle;
+
+	void* CustomData = nullptr;
 };
 
 
@@ -93,7 +95,7 @@ public:
 	
 	virtual void UnequipHand(bool leftHand);
 
-	virtual void EquipHand(UItemInstance* item, bool leftHand, const FName& itemSocket=NAME_None, int locomotionStyle=0);
+	virtual FEquippedHand& EquipHand(UItemInstance* item, bool leftHand, const FName& itemSocket=NAME_None, int locomotionStyle=0);
 
 	virtual void Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents=true);
 

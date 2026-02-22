@@ -14,7 +14,7 @@ class SUPERHERO_API UGunItem : public UWeaponItem
 {
 	GENERATED_BODY()
 
-	
+
 	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const;
 
 	virtual bool attackEnd(class UItemInstance* instance, bool isPrimary, bool isHeavy) const;

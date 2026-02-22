@@ -14,13 +14,13 @@ bool UWeaponItem::use(AActor* target, UItemInstance* instance) const
 			instance->takeFromOwner();
 		}
 		if (instance->EquippedAt == EQUIPPED_AT_NONE) {
-			c->EquipHand(instance, LeftHand, HandleSocket, LocomotionStyle);
+			equip(instance, c, LeftHand);
 		}
 		else if (instance->EquippedAt == EQUIPPED_AT_RIGHT_HAND) {
-			c->UnequipHand(false);
+			unequip(instance, c, false);
 		}
 		else if (instance->EquippedAt == EQUIPPED_AT_LEFT_HAND) {
-			c->UnequipHand(true);
+			unequip(instance, c, true);
 		}
 		return true;
 	}
@@ -32,11 +32,21 @@ void UWeaponItem::restore(UItemInstance* instance, USpudState* State, USpudState
 	if (instance->EquippedAt != -1 && IsValid(instance->Owner)) {
 		if (UClothingSystem* c = Cast<UClothingSystem>(instance->Owner)) {
 			if (instance->EquippedAt == EQUIPPED_AT_RIGHT_HAND) {
-				c->EquipHand(instance, false, HandleSocket, LocomotionStyle);
+				equip(instance, c, false);
 			}
 			else if (instance->EquippedAt == EQUIPPED_AT_LEFT_HAND) {
-				c->EquipHand(instance, true, HandleSocket, LocomotionStyle);
+				equip(instance, c, true);
 			}
 		}
 	}
+}
+
+void UWeaponItem::equip(UItemInstance* instance, UClothingSystem* c, bool leftHand) const
+{
+	c->EquipHand(instance, leftHand, HandleSocket, LocomotionStyle);
+}
+
+void UWeaponItem::unequip(UItemInstance* instance, UClothingSystem* c, bool leftHand) const
+{
+	c->UnequipHand(leftHand);
 }

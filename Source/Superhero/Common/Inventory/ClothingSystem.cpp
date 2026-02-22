@@ -72,7 +72,7 @@ void UClothingSystem::UnequipAll(bool fireEvents)
 		const UClothingItem* t = ClothesMeshes[i].ItemType;
 		UItemInstance* j = ClothesMeshes[i].Item;
 		destroySkeletalMeshComponent(ClothesMeshes[i].Mesh);
-		j->EquippedAt = -1;
+		j->unsetEquipped();
 		RefreshItemInInventoryMenu(j);
 		if (fireEvents) {
 			ItemUnequippedListeners.Broadcast(t, j, this);
@@ -84,7 +84,7 @@ void UClothingSystem::UnequipAll(bool fireEvents)
 void UClothingSystem::UnequipHand(bool leftHand) {
 	FEquippedHand& h = getHand(leftHand);
 	if (h.Item != nullptr) {
-		h.Item->EquippedAt = EQUIPPED_AT_NONE;
+		h.Item->unsetEquipped();
 		RefreshItemInInventoryMenu(h.Item);
 		h.Mesh.unset();
 		h.LocomotionStyle = 0;
@@ -92,12 +92,12 @@ void UClothingSystem::UnequipHand(bool leftHand) {
 	}
 	
 }
-void UClothingSystem::EquipHand(UItemInstance* item, bool leftHand, const FName & itemSocket, int locomotionStyle)
+FEquippedHand& UClothingSystem::EquipHand(UItemInstance* item, bool leftHand, const FName & itemSocket, int locomotionStyle)
 {
 	int eqIdx = leftHand ? EQUIPPED_AT_LEFT_HAND : EQUIPPED_AT_RIGHT_HAND;
 	if (item->isEquipped()) {
 		if (item->EquippedAt == eqIdx) {
-			return;
+			return getHand(leftHand);
 		}
 		ForceUnequip(item, false);
 	}
@@ -108,16 +108,17 @@ void UClothingSystem::EquipHand(UItemInstance* item, bool leftHand, const FName 
 	
 	item->setAnyMesh(h.Mesh, CharacterMesh);
 	h.Mesh.attach(CharacterMesh, itemSocket, h.SocketName);
-	item->EquippedAt = eqIdx;
+	item->setEquipped(eqIdx, h.Mesh.getComponent());
 	h.Item = item;
 	h.LocomotionStyle = locomotionStyle;
 	RefreshItemInInventoryMenu(item);
+	return h;
 }
 
 void UClothingSystem::Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents)
 {
 	
-	if (item->EquippedAt == -1) {
+	if (item->EquippedAt == EQUIPPED_AT_NONE) {
 		uint8 s8 = type->slot();
 		if ((OccupiedDeviousClothingSlots & s8) == 0) {
 			if ((OccupiedClothingSlots & s8) != 0) {
@@ -130,7 +131,7 @@ void UClothingSystem::Equip(const UClothingItem* type, UItemInstance* item, bool
 			}
 			if (USkeletalMesh* clothingMesh = type->WearableMesh.LoadSynchronous()) {
 				USkeletalMeshComponent* clothingComp = createSkeletalMeshComponent(clothingMesh);
-				item->EquippedAt = ClothesMeshes.Add(FEquippedClothes(clothingComp, type, item));
+				item->setEquipped(ClothesMeshes.Add(FEquippedClothes(clothingComp, type, item)), clothingComp);
 				OccupiedClothingSlots |= s8;
 				if (type->IsDevious) OccupiedDeviousClothingSlots |= s8;
 				RefreshItemInInventoryMenu(item);
@@ -157,7 +158,7 @@ void UClothingSystem::RemoveClothingMesh(UItemInstance* item, bool fireEvents)
 		destroySkeletalMeshComponent(ClothesMeshes[idx].Mesh);
 		ClothesMeshes.Last().Item->EquippedAt = idx;
 		ClothesMeshes.RemoveAtSwap(idx);
-		item->EquippedAt = -1;
+		item->unsetEquipped();
 		OccupiedClothingSlots &= ~type->slot();
 		RefreshItemInInventoryMenu(item);
 		if (fireEvents ) {
