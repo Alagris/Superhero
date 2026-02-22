@@ -13,7 +13,7 @@ void UBasicItemListEntry::RefreshItem_Implementation() {
 		ArmorLabel->SetText(FText::AsNumber(t->getArmor()));
 		DamageLabel->SetText(FText::AsNumber(t->getDamage()));
 
-		FSlateColor newColor = Item->EquippedAt >= 0 ? EquippedColor : UnequippedColor;
+		FSlateColor newColor = Item->isEquipped() ? EquippedColor : UnequippedColor;
 		
 		ItemName->SetColorAndOpacity(newColor);
 		

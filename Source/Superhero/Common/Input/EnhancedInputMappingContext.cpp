@@ -13,6 +13,14 @@ UInputAction* UEnhancedInputMappingContext::mapKey(UObject* Outer, FKey key, EIn
 	MapKey(act, key);
 	return act;
 }
+UInputAction* UEnhancedInputMappingContext::map2Keys(UObject* Outer, FKey key, FKey key2, EInputActionValueType type, bool triggerWhenPaused) {
+	UInputAction* act = NewObject<UInputAction>(Outer);
+	act->bTriggerWhenPaused = triggerWhenPaused;
+	act->ValueType = type;
+	MapKey(act, key);
+	MapKey(act, key2);
+	return act;
+}
 UInputAction* UEnhancedInputMappingContext::mapTapOrHoldKey(UObject* Outer, FKey key, float timeThreshold) {
 	UInputAction* act = NewObject<UInputAction>(Outer);
 	FEnhancedActionKeyMapping& mapping = MapKey(act, key);
@@ -73,6 +81,15 @@ UInputAction* UEnhancedInputMappingContext::mapTapKey(UObject* Outer, FKey key, 
 	FEnhancedActionKeyMapping& mapping = MapKey(act, key);
 	UInputTriggerTap* tap = NewObject<UInputTriggerTap>(Outer);
 	tap->TapReleaseTimeThreshold = timeThreshold;
+	mapping.Triggers.Add(tap);
+	return act;
+}
+UInputAction* UEnhancedInputMappingContext::mapPressKey(UObject* Outer, FKey key, bool triggerWhenPaused)
+{
+	UInputAction* act = NewObject<UInputAction>(Outer);
+	act->bTriggerWhenPaused = triggerWhenPaused;
+	FEnhancedActionKeyMapping& mapping = MapKey(act, key);
+	UInputTriggerPressed* tap = NewObject<UInputTriggerPressed>(Outer);
 	mapping.Triggers.Add(tap);
 	return act;
 }

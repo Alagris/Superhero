@@ -16,7 +16,9 @@ class SUPERHERO_API UEnhancedInputMappingContext : public UInputMappingContext
 public:
 
 	UInputAction* mapKey(UObject* Outer,FKey key, EInputActionValueType type = EInputActionValueType::Boolean, bool triggerWhenPaused = false);
+	UInputAction* map2Keys(UObject* Outer, FKey key, FKey key2, EInputActionValueType type = EInputActionValueType::Boolean, bool triggerWhenPaused = false);
 	UInputAction* mapTapKey(UObject* Outer,FKey key, float timeThreshold);
+	UInputAction* mapPressKey(UObject* Outer, FKey key, bool triggerWhenPaused = false);
 	UInputAction* mapTapOrHoldKey(UObject* Outer,FKey key, float timeThreshold);
 	UInputAction* mapHoldThenOngoingKey(UObject* Outer,FKey key, float timeThreshold);
 	UInputAction* mapHoldKey(UObject* Outer,FKey key, float timeThreshold);

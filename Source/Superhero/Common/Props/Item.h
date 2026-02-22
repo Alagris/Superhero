@@ -62,6 +62,8 @@ public:
 
 	virtual class AItemActor* spawn(UWorld* world, class UItemInstance* instance, FTransform trans) const;
 
+	virtual bool setAnyMesh(struct FAnyMesh& m, UObject* outer) const;
+
 	virtual void sample(class UInventory* inv, int count = 1) override;
 
 	virtual void store(class UItemInstance* instance, const USpudState* State, USpudStateCustomData* CustomData) const { };

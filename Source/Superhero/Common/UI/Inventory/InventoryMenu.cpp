@@ -5,6 +5,7 @@
 #include "Common/UI/Inventory/ItemListView.h"
 #include "Common/UI/Inventory/ItemListEntry.h"
 #include "Common/UI/GameHUD.h"
+#include <EnhancedInputComponent.h>
 
 void UInventoryMenu::NativeConstruct()
 {
@@ -13,26 +14,21 @@ void UInventoryMenu::NativeConstruct()
 
 FReply UInventoryMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
+    /*
     const FKey key = InKeyEvent.GetKey();
     if (key == EKeys::C || key == EKeys::Escape) {
         Hud->hideInventoryMenu();
         return FReply::Handled();
     }
     else if (key == EKeys::R) {
-        UItemInstance* item = Cast<UItemInstance>(ItemListView->GetSelectedItem());
-        if (item) {
-            item->drop();
-            
-            return FReply::Handled();
-        }
+        dropSelected();
+        return FReply::Handled();
     }
     else if (key == EKeys::E) {
-        UItemInstance* item = Cast<UItemInstance>(ItemListView->GetSelectedItem());
-        if (item) {
-            item->use(PlayerInv->GetOwner());
-            return FReply::Handled();
-        }
+        useSelected();
+        return FReply::Handled();
     }
+    */
     return FReply::Unhandled();
 }
 
@@ -44,12 +40,39 @@ bool UInventoryMenu::setup(AGameHUD* hud, APlayerController* playerController, U
     Hud = hud;
     ExchangeForFree = exchangeForFree;
     Page = page;
+
+    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(playerController->InputComponent)) {
+        EnhancedInputComponent->BindAction(hud->UIInput->Interact, ETriggerEvent::Triggered, this, &UInventoryMenu::OnInteract);
+        EnhancedInputComponent->BindAction(hud->UIInput->Drop, ETriggerEvent::Triggered, this, &UInventoryMenu::OnDrop);
+        EnhancedInputComponent->BindAction(hud->UIInput->Up, ETriggerEvent::Triggered, this, &UInventoryMenu::OnUp);
+        EnhancedInputComponent->BindAction(hud->UIInput->Down, ETriggerEvent::Triggered, this, &UInventoryMenu::OnDown);
+        EnhancedInputComponent->BindAction(hud->UIInput->Exit, ETriggerEvent::Triggered, this, &UInventoryMenu::OnExit);
+        EnhancedInputComponent->BindAction(hud->UIInput->Enter, ETriggerEvent::Triggered, this, &UInventoryMenu::OnEnter);
+        EnhancedInputComponent->BindAction(hud->UIInput->Inventory, ETriggerEvent::Triggered, this, &UInventoryMenu::OnExit);
+        EnhancedInputComponent->BindAction(hud->UIInput->Scroll, ETriggerEvent::Triggered, this, &UInventoryMenu::OnScroll);
+    }
+    hud->UIInput->setMapping(playerController);
     setPageForce(page);
 	return false;
 }
 
 void UInventoryMenu::onItemSelected(UItemInstance* item)
 {
+}
+
+void UInventoryMenu::OnScroll(const FInputActionValue& Value)
+{
+    float zoom = Value.Get<FInputActionValue::Axis1D>();
+    moveSelection(zoom > 0 ? 1 : -1);
+}
+
+void UInventoryMenu::exit()
+{
+    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent)) {
+
+        EnhancedInputComponent->ClearBindingsForObject(this);
+    }
+    Hud->hideInventoryMenu();
 }
 
 void UInventoryMenu::updateItem(UItemInstance* item)
@@ -70,6 +93,9 @@ void UInventoryMenu::addAllItems()
 {
     for (auto& entry : ItemListView->Inv->Items) {
         ItemListView->AddItem(entry.Value);
+    }
+    if (ItemListView->GetNumItems() > 0) {
+        ItemListView->SetSelectedIndex(0);
     }
 
 }

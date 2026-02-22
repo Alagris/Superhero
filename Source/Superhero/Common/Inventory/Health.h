@@ -21,8 +21,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health;
 
-		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Stamina;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxStamina;
 };

@@ -15,6 +15,8 @@ void UClothingSystem::InitializeComponent()
 	Super::InitializeComponent();
 	if (ACharacter* c = Cast<ACharacter>(GetOwner())) {
 		CharacterMesh = c->GetMesh();
+		//HandSocketL = CharacterMesh->GetSocketByName(HandSocketNameL);
+		//HandSocketR = CharacterMesh->GetSocketByName(HandSocketNameR);
 	}
 }
 
@@ -78,6 +80,38 @@ void UClothingSystem::UnequipAll(bool fireEvents)
 		
 	}
 	ClothesMeshes.Empty();
+}
+void UClothingSystem::UnequipHand(bool leftHand) {
+	FEquippedHand& h = getHand(leftHand);
+	if (h.Item != nullptr) {
+		h.Item->EquippedAt = EQUIPPED_AT_NONE;
+		RefreshItemInInventoryMenu(h.Item);
+		h.Mesh.unset();
+		h.LocomotionStyle = 0;
+		h.Item = nullptr;
+	}
+	
+}
+void UClothingSystem::EquipHand(UItemInstance* item, bool leftHand, const FName & itemSocket, int locomotionStyle)
+{
+	int eqIdx = leftHand ? EQUIPPED_AT_LEFT_HAND : EQUIPPED_AT_RIGHT_HAND;
+	if (item->isEquipped()) {
+		if (item->EquippedAt == eqIdx) {
+			return;
+		}
+		ForceUnequip(item, false);
+	}
+	FEquippedHand & h= getHand(leftHand);
+	if (h.Item != nullptr) {
+		UnequipHand(leftHand);
+	}
+	
+	item->setAnyMesh(h.Mesh, CharacterMesh);
+	h.Mesh.attach(CharacterMesh, itemSocket, h.SocketName);
+	item->EquippedAt = eqIdx;
+	h.Item = item;
+	h.LocomotionStyle = locomotionStyle;
+	RefreshItemInInventoryMenu(item);
 }
 
 void UClothingSystem::Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents)

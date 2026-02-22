@@ -9,6 +9,7 @@
 #include "Status/Status.h"
 #include "CharacterMenu/CharacterMenu.h"
 #include "Inventory/InventoryMenu.h"
+#include "Common/Input/UIInputMappingContext.h"
 #include "GameHUD.generated.h"
 
 
@@ -52,6 +53,16 @@ class SUPERHERO_API AGameHUD : public AHUD
 	TObjectPtr<UInventoryMenu> InventoryMenuWidget;
 
 public:
+
+
+	UPROPERTY()
+	UUIInputMappingContext* UIInput;
+
+	UPROPERTY()
+	UInputMappingContext* GameInput;
+
+	void setGameInputMapping();
+
 	void TriggerPauseGame(const struct FInputActionValue& Value) {
 		triggerPauseGame();
 	}
@@ -109,6 +120,9 @@ private:
 				|| isPauseMenuOpen();
 
 			StatusWidget->SetVisibility(anyOpen ? ESlateVisibility::Hidden : ESlateVisibility::Visible);
+			if (!anyOpen) {
+				setGameInputMapping();
+			}
 		}
 	}
 };

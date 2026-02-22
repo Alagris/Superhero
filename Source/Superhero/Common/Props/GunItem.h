@@ -3,23 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Props/Item.h"
+#include "Common/Props/WeaponItem.h"
 #include "GunItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API UGunItem : public UItem
+class SUPERHERO_API UGunItem : public UWeaponItem
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<USkeletalMesh> RiggedMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float Damage = 0;
-
-	virtual float getDamage() const { return Damage; }
+	
 };

@@ -31,6 +31,10 @@ class AThirdPersonCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	float DesiredCamerArmLength;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	float CameraZoomInterpolationSpeed=2;
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -48,15 +52,19 @@ class AThirdPersonCharacter : public ACharacter
 	
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void BeginPlay() override;
 public:
 
 	/** Constructor */
 	AThirdPersonCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	float GetCameraArmLength() const {
+		return GetCameraBoom()->TargetArmLength;
+	}
 
 	void SetCameraDistance(float distance) {
 		if (distance < MinZoomOut) {
@@ -64,7 +72,7 @@ public:
 		}
 		else {
 			ToggleCamera(false);
-			this->GetCameraBoom()->TargetArmLength = FMath::Min(MaxZoomOut, distance);
+			DesiredCamerArmLength = FMath::Min(MaxZoomOut, distance);
 		}
 	}
 	UCameraComponent* GetCurrentCamera() {

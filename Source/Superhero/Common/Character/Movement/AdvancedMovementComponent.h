@@ -30,6 +30,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	EMovementSpeed MovementSpeed = EMovementSpeed::WALK;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsLeftLegInFront;
+
 	void TriggerStartSlowWalk(const FInputActionValue& Value)
 	{
 		StartSlowWalking();

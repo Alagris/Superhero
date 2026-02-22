@@ -14,7 +14,9 @@
 void AThirdPersonPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
+	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
+		hud->GameInput = DefaultMappingContext;
+	}
 }
 
 void AThirdPersonPlayerController::SetupInputComponent()

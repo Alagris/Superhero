@@ -35,11 +35,3 @@ void UClothingItem::restore(UItemInstance* instance,class USpudState* State, cla
 	}
 }
 
-void UClothingItem::onRemovedFromInventory(UItemInstance* instance) const
-{
-	if (IsValid(instance->Owner)) {
-		if (UClothingSystem* c = Cast<UClothingSystem>(instance->Owner)) {
-			c->Unequip(this, instance);
-		}
-	}
-}

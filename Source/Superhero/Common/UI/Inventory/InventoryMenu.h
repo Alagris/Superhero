@@ -82,6 +82,54 @@ public:
 
 	virtual void onItemSelected(UItemInstance* item);
 
+	void OnUp(const struct FInputActionValue& Value) {
+		moveSelection(-1);
+	}
+
+	void OnDown(const struct FInputActionValue& Value) {
+		moveSelection(1);
+	}
+
+	void moveSelection(int offset) {
+		int n = ItemListView->GetNumItems();
+		if (n > 0) {
+			UObject* o = ItemListView->GetSelectedItem();
+			int i = o == nullptr ? 0 : ItemListView->GetIndexForItem(o);
+			ItemListView->SetSelectedIndex((i + offset) % n);
+		}
+	}
+
+	void OnExit(const struct FInputActionValue& Value) {
+		exit();
+	}
+
+	void OnEnter(const struct FInputActionValue& Value) {
+
+	}
+
+	void OnInteract(const struct FInputActionValue& Value) {
+		useSelected();
+	}
+
+	void OnDrop(const struct FInputActionValue& Value) {
+		dropSelected();
+	}
+
+	void OnScroll(const FInputActionValue& Value);
+	void useSelected() {
+		if (UItemInstance* item = getSelected()) {
+			item->use(PlayerInv->GetOwner());
+		}
+	}
+	void exit();
+	void dropSelected() {
+		if (UItemInstance* item = getSelected()) {
+			dropItem(item);
+		}
+	}
+	UItemInstance* getSelected() const {
+		return ItemListView->GetSelectedItem<UItemInstance>();
+	}
 	void removeItem(UItemInstance* item) {
 		ItemListView->RemoveItem(item);
 	}

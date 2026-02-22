@@ -1,0 +1,40 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Common/Props/Item.h"
+#include "WeaponItem.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class SUPERHERO_API UWeaponItem : public UItem
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<USkeletalMesh> RiggedMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int LocomotionStyle = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float Damage = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool LeftHand = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName HandleSocket;
+
+	virtual float getDamage() const { return Damage; }
+
+	virtual bool use(AActor* target, class UItemInstance* instance) const override;
+
+	virtual void restore(class UItemInstance* instance, class USpudState* State, class USpudStateCustomData* CustomData) const override;
+
+	
+};

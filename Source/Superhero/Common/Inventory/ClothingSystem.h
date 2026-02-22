@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Inventory.h"
 #include "Common/Props/ClothingItem.h"
+#include "Any/AnyMesh.h"
 #include "ClothingSystem.generated.h"
 
 class UItemInstance;
@@ -30,6 +31,29 @@ public:
 	UPROPERTY()
 	UItemInstance* Item;
 };
+
+
+USTRUCT(BlueprintType)
+struct SUPERHERO_API FEquippedHand 
+{
+	GENERATED_BODY()
+public:
+	FEquippedHand() {}
+	FEquippedHand(FName socketName) :SocketName(socketName) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName SocketName;
+
+	UPROPERTY(BlueprintReadOnly)
+	UItemInstance* Item;
+
+	UPROPERTY(BlueprintReadOnly)
+	FAnyMesh Mesh;
+
+	UPROPERTY(BlueprintReadOnly)
+	int LocomotionStyle;
+};
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SUPERHERO_API UClothingSystem : public UInventory
@@ -67,12 +91,32 @@ public:
 		return false;
 	}
 	
+	virtual void UnequipHand(bool leftHand);
+
+	virtual void EquipHand(UItemInstance* item, bool leftHand, const FName& itemSocket=NAME_None, int locomotionStyle=0);
 
 	virtual void Equip(const UClothingItem* type, UItemInstance* item, bool fireEvents=true);
 
 	virtual void Unequip(const UClothingItem* type, UItemInstance* item, bool fireEvents = true);
 
 	virtual void UnequipAll(bool fireEvents = true);
+
+	void ForceUnequip(UItemInstance* item, bool fireEvents = true) {
+		if (item->EquippedAt >= 0) {
+			RemoveClothingMesh(item, fireEvents);
+		}
+		else if (item->EquippedAt == EQUIPPED_AT_RIGHT_HAND) {
+			UnequipHand(false);
+		}
+		else if (item->EquippedAt == EQUIPPED_AT_LEFT_HAND) {
+			UnequipHand(true);
+		}
+	}
+
+	void UnequipHands() {
+		UnequipHand(true);
+		UnequipHand(false);
+	}
 
 	FOnItemEquippedSignature ItemEquippedListeners;
 
@@ -83,7 +127,17 @@ public:
 
 	UPROPERTY()
 	USkeletalMeshComponent* CharacterMesh;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FEquippedHand HandL = FEquippedHand("l_hand_anchorSocket");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FEquippedHand HandR = FEquippedHand("r_hand_anchorSocket");
+
+	FEquippedHand& getHand(bool leftHand) {
+		return leftHand ? HandL : HandR;
+	}
+
 	bool canEquipClothes(const UClothingItem* type) const
 	{
 		return (OccupiedClothingSlots & uint8(type->Slot)) == 0;
@@ -97,11 +151,12 @@ public:
 	void autoEquip();
 
 	virtual void onItemCompleteRemoval(UItemInstance* item, bool fireEvents) override {
-		RemoveClothingMesh(item, fireEvents);
+		ForceUnequip(item, fireEvents);
 	}
 
 	virtual void clearInventory() override {
 		UnequipAll(false);
+		UnequipHands();
 		Super::clearInventory();
 	}
 private:

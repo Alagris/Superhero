@@ -5,6 +5,7 @@
 #include "Actor/ItemActorStatic.h"
 #include "Actor/ItemActorSkeletal.h"
 #include "Common/Inventory/Inventory.h"
+#include "Common/Inventory/Any/AnyMesh.h"
 #include "Common/Inventory/ItemInstance.h"
 
 UItemInstance * UItem::create(UObject* outer, int count) const
@@ -28,5 +29,15 @@ AItemActor* UItem::spawn(UWorld* world, class UItemInstance* instance, FTransfor
 		return AItemActorSkeletal::spawn(world, instance, trans);
 	}else{
 		return AItemActorStatic::spawn(world, instance, trans);
+	}
+}
+
+bool UItem::setAnyMesh(FAnyMesh& m, UObject * outer) const
+{
+	if (isSkeletal()) {
+		return m.setMesh(getSkeletalMesh(), outer);
+	}
+	else {
+		return m.setMesh(getMesh(), outer);
 	}
 }

@@ -50,6 +50,6 @@ public:
 
 	virtual void restore(class UItemInstance* instance, class USpudState* State,class USpudStateCustomData* CustomData) const override;
 
-	virtual void onRemovedFromInventory(class UItemInstance* instance) const override;
+	
 
 };

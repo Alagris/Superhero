@@ -22,6 +22,14 @@ void AThirdPersonCharacter::Tick(float DeltaTime)
 		FVector pos = getRayEnd(PhysicsHandle->physicshandleDistance);
 		PhysicsHandle->SetTargetLocation(pos);
 	}
+
+	this->GetCameraBoom()->TargetArmLength = FMath::FInterpTo(GetCameraArmLength(), DesiredCamerArmLength, DeltaTime, CameraZoomInterpolationSpeed);
+}
+
+void AThirdPersonCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	DesiredCamerArmLength = GetCameraArmLength();
 }
 
 AThirdPersonCharacter::AThirdPersonCharacter(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer)
@@ -52,7 +60,7 @@ AThirdPersonCharacter::AThirdPersonCharacter(const FObjectInitializer& ObjectIni
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f;
+	DesiredCamerArmLength = CameraBoom->TargetArmLength = 400.0f;
 	CameraBoom->bUsePawnControlRotation = true;
 
 	
@@ -80,7 +88,7 @@ void AThirdPersonCharacter::TriggerCameraZoomOut(const FInputActionValue& Value)
 		ToggleCamera(false);
 	}
 	else { // in third person view
-		this->GetCameraBoom()->TargetArmLength = FMath::Min(this->GetCameraBoom()->TargetArmLength + ZoomSpeed, MaxZoomOut);
+		DesiredCamerArmLength = FMath::Min(DesiredCamerArmLength  + ZoomSpeed, MaxZoomOut);
 	}
 }
 void AThirdPersonCharacter::TriggerCameraZoom(const FInputActionValue& Value) {
@@ -127,12 +135,12 @@ void AThirdPersonCharacter::TriggerInteractStart(const FInputActionValue& Value)
 void AThirdPersonCharacter::TriggerCameraZoomIn(const FInputActionValue& Value) {
 
 	if (this->FollowCamera->IsActive()) { // in third person view
-		float arm = this->GetCameraBoom()->TargetArmLength;
-		if (arm <= MinZoomOut) {
+		if (DesiredCamerArmLength <= MinZoomOut) {
 			ToggleCamera(true);
 		}
 		else {
-			this->GetCameraBoom()->TargetArmLength = FMath::Min(arm - ZoomSpeed, MaxZoomOut);
+			DesiredCamerArmLength = FMath::Min(DesiredCamerArmLength - ZoomSpeed, MaxZoomOut);
+			
 		}
 	}
 }

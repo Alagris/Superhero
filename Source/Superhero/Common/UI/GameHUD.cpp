@@ -2,12 +2,30 @@
 
 
 #include "Common/UI/GameHUD.h"
+#include <EnhancedInputSubsystems.h>
 
 
 void AGameHUD::BeginPlay()
 {
+	UIInput = NewObject<UUIInputMappingContext>(this);
+	UIInput->initialize(GetOwningPlayerController());
 	if (StatusWidget) {
 		StatusWidget->AddToViewport(999);
+	}
+
+
+}
+
+void AGameHUD::setGameInputMapping()
+{
+	if (IsValid(GameInput)) {
+		APlayerController* PlayerController = GetOwningPlayerController();
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			
+			Subsystem->ClearAllMappings();
+			Subsystem->AddMappingContext(GameInput, 0);
+		}
 	}
 }
 
@@ -21,7 +39,7 @@ bool AGameHUD::showInventoryMenu(UInventory* Inv)
 		InventoryMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
 		InventoryMenuWidget->SetKeyboardFocus();
 
-		FInputModeUIOnly Mode;
+		FInputModeGameAndUI Mode;
 		Mode.SetLockMouseToViewportBehavior(EMouseLockMode::LockAlways);
 		Mode.SetWidgetToFocus(InventoryMenuWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);

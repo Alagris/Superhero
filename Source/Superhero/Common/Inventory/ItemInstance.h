@@ -8,6 +8,11 @@
 #include "ISpudObject.h"
 #include "ItemInstance.generated.h"
 
+#define EQUIPPED_AT_PROJECTILE -5
+#define EQUIPPED_AT_DOUBLEHANDED -4
+#define EQUIPPED_AT_NONE -1
+#define EQUIPPED_AT_LEFT_HAND -2
+#define EQUIPPED_AT_RIGHT_HAND -3
 /**
  * 
  */
@@ -20,7 +25,7 @@ public:
 	int Count=1;
 
 	UPROPERTY(SaveGame, EditAnywhere, BlueprintReadOnly)
-	int EquippedAt = -1;
+	int EquippedAt = EQUIPPED_AT_NONE;
 
 	UPROPERTY(SaveGame, EditAnywhere, BlueprintReadOnly)
 	float Durability = -1;
@@ -58,11 +63,19 @@ public:
 	inline bool use(AActor * target) {
 		return ItemType->use(target, this);
 	}
+	bool setAnyMesh(struct FAnyMesh& m, UObject* outer) const {
+		return ItemType->setAnyMesh(m, outer);
+	}
+
 	UItemInstance* remove(int quantity = 1, bool spawnPopped = true);
 
 	class AItemActor* drop(int quantity=1, AActor* target=nullptr);
 
-	inline UItemInstance* takeFromOwner();
+	UItemInstance* takeFromOwner();
+
+	bool isEquipped() {
+		return EquippedAt != EQUIPPED_AT_NONE;
+	}
 
 	inline UItemInstance* popCount(UObject* outer, int count = 1, bool spawnPopped = true) {
 		if (Count > count) {
@@ -70,7 +83,7 @@ public:
 			return spawnPopped ? ItemType->create(outer, count) : nullptr;
 		}
 		else {
-			EquippedAt = -1;
+			EquippedAt = EQUIPPED_AT_NONE;
 			return this;
 		}
 	}

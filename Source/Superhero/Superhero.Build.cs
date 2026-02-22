@@ -33,7 +33,8 @@ public class Superhero : ModuleRules
 			"StateTreeModule",
 			"GameplayStateTreeModule",
 			"Niagara",
-			"UMG",
+            "AnimGraphRuntime",
+            "UMG",
             "SlateCore",
             "Slate",
 		});

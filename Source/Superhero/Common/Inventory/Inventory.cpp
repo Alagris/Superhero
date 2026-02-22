@@ -71,9 +71,9 @@ UItemInstance* UInventory::removeItem(const UItem* item, int quantity, bool spaw
 			TPair<const UItem*, UItemInstance*>& i = Items.Get(id);
 			UItemInstance* popped = i.Value->popCount(GetWorld(), quantity, spawnPopped);
 			if (popped == i.Value) {
+				onItemCompleteRemoval(popped, fireEvents);
 				Items.Remove(id);
 				popped->Owner = nullptr;
-				onItemCompleteRemoval(popped, fireEvents);
 				if (fireEvents) {
 					ItemRemovedListeners.Broadcast(i.Value, this);
 				}
