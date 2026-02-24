@@ -39,6 +39,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class USceneComponent* SceneComp;
 
+	float getDamageDealt(class UHealth * victim, AActor * attacker, float hitStrength) {
+		return ItemType->getDamageDealt(victim, attacker, this, hitStrength);
+	}
+
 	void unsetEquipped() {
 		EquippedAt = EQUIPPED_AT_NONE;
 		SceneComp = nullptr;

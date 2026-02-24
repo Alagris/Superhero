@@ -56,6 +56,9 @@ public:
 	inline bool isSkeletal() const {
 		return Mesh.IsNull();
 	}
+	virtual float getDamageDealt(class UHealth* victim, AActor* attacker, class UItemInstance * weaponInstance, float hitStrength) const {
+		return getDamage();
+	}
 	virtual bool use(AActor* target, class UItemInstance* instance) const { return false; };
 
 	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };

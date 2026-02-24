@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include <Common/AI/AIControlableComponent.h>
+#include <Common/Interact/Hittable.h>
+#include <Common/Inventory/Health.h>
 #include "BasicAICharacter.generated.h"
 
+
 UCLASS()
-class SUPERHERO_API ABasicAICharacter : public ACharacter
+class SUPERHERO_API ABasicAICharacter : public ACharacter, public IHittable
 {
 	GENERATED_BODY()
 
@@ -29,4 +32,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UAIControlableComponent* AI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	UHealth* Health;
+
+	virtual void OnHit_Implementation(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) {
+		Health->ReceiveHit(projectile, shooter, rangedWeapon, hitSpeed, NormalImpulse, Hit);
+	}
 };

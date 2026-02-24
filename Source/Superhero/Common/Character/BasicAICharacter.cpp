@@ -13,9 +13,12 @@ ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer
 	PrimaryActorTick.bCanEverTick = true;
 
 	AI = CreateDefaultSubobject<UAIControlableComponent>(TEXT("AI"));
+	Health = CreateDefaultSubobject<UHealth>(TEXT("Health"));
 	AIControllerClass = ABaseAIController::StaticClass();
 	UAdvancedMovementComponent* a = Cast<UAdvancedMovementComponent>(GetCharacterMovement());
 	a->setUseAccelerationForPathFollowing(true);
+
+
 }
 
 // Called when the game starts or when spawned

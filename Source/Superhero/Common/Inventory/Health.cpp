@@ -31,4 +31,3 @@ void UHealth::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponen
 
 	// ...
 }
-
