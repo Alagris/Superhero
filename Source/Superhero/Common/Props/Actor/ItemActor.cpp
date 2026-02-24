@@ -8,13 +8,14 @@ AItemActor::AItemActor()
 {
 	this->SetActorHiddenInGame(true);
 	PrimaryActorTick.bCanEverTick = false;
-
+	
 }
 
 void AItemActor::OnInteract_Implementation(AActor* actor, UItemInstance* item, const FHitResult& Hit)
 {
 	UInventory* inv = actor->GetComponentByClass<UInventory>();
 	if (inv) {
+		Item->SceneComp = nullptr;
 		inv->addItem(Item);
 		Item = nullptr;
 		Destroy();

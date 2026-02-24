@@ -38,10 +38,11 @@ public:
 	virtual bool isProjectile() const override {
 		return true;
 	}
-	inline void shoot(AActor* shooter, UItemInstance * rangedWeapon, FVector velocity) {
+	inline void shoot(AActor* shooter, UItemInstance * rangedWeapon, FVector velocity, float gravity=0) {
 		Shooter = shooter;
 		RangedWeapon = rangedWeapon;
 		Movement->Velocity = velocity;
+		Movement->ProjectileGravityScale = gravity;
 		Movement->SetUpdatedComponent(RootComponent);
 		Mesh->OnComponentHit.AddUniqueDynamic(this, &AItemActorProjectile::onProjectileHit);
 		

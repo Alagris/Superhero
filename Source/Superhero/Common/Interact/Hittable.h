@@ -22,5 +22,5 @@ class SUPERHERO_API IHittable
 
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interaction")
-	void OnHit(class AItemActorProjectile* projectile, FVector NormalImpulse, const FHitResult& Hit) ;
+	void OnHit(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) ;
 };

@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "CommandedAIController.generated.h"
+#include "BaseAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API ACommandedAIController : public AAIController
+class SUPERHERO_API ABaseAIController : public AAIController
 {
 	GENERATED_BODY()
 	virtual void OnPossess(APawn* pawn) override;
 
-	
+public:
+
 };

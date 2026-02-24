@@ -5,31 +5,20 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Common/Inventory/Inventory.h"
 #include "Common/Inventory/ItemInstance.h"
-#include "NiagaraComponent.h"
+
 #include <Common/Inventory/ClothingSystem.h>
+#include "Actor/ItemActorNiagaraProjectile.h"
 
-void UNiagaraGunItem::attackTrigger(UItemInstance* instance, bool isHeavy) const
+AActor* UNiagaraGunItem::spawnProjectile(UItemInstance* instance, bool isHeavy, FTransform& trans) const
 {
-	if (IsValid(instance->SceneComp)){
-		FTransform t;
-		if (UStaticMeshComponent * sta= Cast<UStaticMeshComponent>(instance->SceneComp)) {
-			t = sta->GetSocketTransform(BarrelTipSocket);
-		}else if (USkeletalMeshComponent* skel = Cast<USkeletalMeshComponent>(instance->SceneComp)) {
-			t = skel->GetSocketTransform(BarrelTipSocket);
-		}
-		else {
-			return;
-		}
-
-		
-		UNiagaraComponent* n = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			instance->Owner->GetWorld(),
-			Niagara,
-			t.GetLocation(),
-			t.GetRotation().Rotator()
-		);
-		for (const FUserParam & p : UserParams) {
-			n->SetVectorParameter(p.Name, p.Value);
-		}
-	}	
+    AItemActorNiagaraProjectile* p = AItemActorNiagaraProjectile::spawn(instance->GetWorld(), Trail, trans, ImpactExplosion);
+    p->Movement->ProjectileGravityScale = 0;
+    //Movement->Bounciness = 0.1f;
+    //p->Movement->Friction = 0.5f;
+    p->CollisionSphere->SetSimulatePhysics(SimulatePhysics);
+    p->CollisionSphere->SetEnableGravity(EnableGravity);
+    p->Movement->MaxSpeed = MaxSpeed;
+    AActor* shooter = instance->Owner == nullptr ? nullptr : instance->Owner->GetOwner();
+    p->shoot(shooter, instance, ProjectileVelocity, ProjectileGravity, MuzzleFlash);
+    return p;
 }

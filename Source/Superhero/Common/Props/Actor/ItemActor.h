@@ -40,11 +40,14 @@ public:
 		return false;
 	}
 	virtual void setItem(UItemInstance* item) {
+		if (IsValid(Item)) {
+			Item->SceneComp = nullptr;
+		}
 		Item = item;
 		SetEnabled(item != nullptr);
+		
 	}
 
-	
 	virtual void OnInteract_Implementation(AActor* actor, class UItemInstance* item, const struct FHitResult& Hit) override;
 	
 	inline bool isEnabled() const{

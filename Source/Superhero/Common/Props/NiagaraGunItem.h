@@ -7,18 +7,6 @@
 #include "NiagaraSystem.h"
 #include "NiagaraGunItem.generated.h"
 
-USTRUCT(BlueprintType)
-struct SUPERHERO_API FUserParam
-{
-	GENERATED_BODY()
-public:
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName Name;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FVector Value;
-};
 /**
  * 
  */
@@ -30,13 +18,21 @@ public:
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName BarrelTipSocket="Tip";
+	UNiagaraSystem* MuzzleFlash;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UNiagaraSystem* Niagara;
+	UNiagaraSystem* ImpactExplosion;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FUserParam> UserParams;
+	UNiagaraSystem* Trail;
 
-	virtual void attackTrigger(class UItemInstance* instance, bool isHeavy) const override;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool SimulatePhysics=false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool EnableGravity=false;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MaxSpeed=100000;
+
+
+	virtual AActor* spawnProjectile(class UItemInstance* instance, bool isHeavy, FTransform& trans) const override;
 };

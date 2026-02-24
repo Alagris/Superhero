@@ -24,7 +24,7 @@ void AItemActorProjectile::onProjectileHit(UPrimitiveComponent* HitComponent, AA
 {
 	if (OtherActor != nullptr && OtherActor->Implements<UHittable>()) {
 		
-		IHittable::Execute_OnHit(OtherActor, this, NormalImpulse, Hit);
+		IHittable::Execute_OnHit(OtherActor, this, Shooter, RangedWeapon, (float)hitSpeed(), NormalImpulse, Hit);
 		
 		Destroy();
 	}

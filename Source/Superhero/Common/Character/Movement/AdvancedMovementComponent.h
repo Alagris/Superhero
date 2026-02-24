@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "BasicCharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "MovementSpeed.h"
 #include "AdvancedMovementComponent.generated.h"
@@ -28,7 +28,7 @@ struct SUPERHERO_API FCharacterAnim
  * 
  */
 UCLASS()
-class SUPERHERO_API UAdvancedMovementComponent : public UCharacterMovementComponent
+class SUPERHERO_API UAdvancedMovementComponent : public UBasicCharacterMovementComponent
 {
 	GENERATED_BODY()
 	
@@ -192,5 +192,5 @@ public:
 		return !IsAiming;
 	}
 
-
+	virtual void BeginPlay() override;
 };

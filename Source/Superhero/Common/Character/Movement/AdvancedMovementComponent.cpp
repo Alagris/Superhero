@@ -20,3 +20,9 @@ void UAdvancedMovementComponent::ExecuteNextAttack(bool isHeavy)
 
 	}
 }
+
+void UAdvancedMovementComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	StartWalking();
+}

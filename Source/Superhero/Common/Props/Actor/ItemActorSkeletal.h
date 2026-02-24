@@ -35,6 +35,7 @@ public:
 			//check(item->isSkeletal());
 			Mesh->SetSkeletalMesh(item->getSkeletalMesh());
 			item->applyMaterials(Mesh);
+			item->SceneComp = Mesh;
 		}
 		
 	}

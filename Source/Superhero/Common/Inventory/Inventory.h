@@ -71,6 +71,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	float Money;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
+	UItemInstance* selectedProjectile=nullptr;
+
 	FOnItemAddedSignature ItemAddedListeners;
 
 	FOnItemRemovedSignature ItemRemovedListeners;
