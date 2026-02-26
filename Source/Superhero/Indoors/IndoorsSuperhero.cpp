@@ -12,6 +12,7 @@ AIndoorsSuperhero::AIndoorsSuperhero()
 
 	Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Clothing"));
+	Dialogue = CreateDefaultSubobject<UDialogueComponent>(TEXT("Dialogue"));
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
 }
@@ -44,16 +45,3 @@ void AIndoorsSuperhero::OnInteract_Implementation(AActor* actor, class UItemInst
 	}
 	
 }
-
-void AIndoorsSuperhero::OnDialogueEntered_Implementation(APlayerController* Player)
-{
-}
-
-void AIndoorsSuperhero::OnDialogueExited_Implementation(APlayerController* Player)
-{
-}
-
-void AIndoorsSuperhero::OnPlayDialogueAnim_Implementation(UAnimMontage* Anim)
-{
-}
-

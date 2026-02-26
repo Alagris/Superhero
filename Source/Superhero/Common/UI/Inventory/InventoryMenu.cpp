@@ -10,27 +10,9 @@
 void UInventoryMenu::NativeConstruct()
 {
     ItemListView->Root = this;
+    
 }
 
-FReply UInventoryMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
-{
-    /*
-    const FKey key = InKeyEvent.GetKey();
-    if (key == EKeys::C || key == EKeys::Escape) {
-        Hud->hideInventoryMenu();
-        return FReply::Handled();
-    }
-    else if (key == EKeys::R) {
-        dropSelected();
-        return FReply::Handled();
-    }
-    else if (key == EKeys::E) {
-        useSelected();
-        return FReply::Handled();
-    }
-    */
-    return FReply::Unhandled();
-}
 
 bool UInventoryMenu::setup(AGameHUD* hud, APlayerController* playerController, UInventory* player, UInventory* npc, bool exchangeForFree, EInventoryPage page)
 {
@@ -52,13 +34,10 @@ bool UInventoryMenu::setup(AGameHUD* hud, APlayerController* playerController, U
         EnhancedInputComponent->BindAction(hud->UIInput->Scroll, ETriggerEvent::Triggered, this, &UInventoryMenu::OnScroll);
     }
     hud->UIInput->setMapping(playerController);
-    setPageForce(page);
-	return false;
+    setPage(page, true);
+	return true;
 }
 
-void UInventoryMenu::onItemSelected(UItemInstance* item)
-{
-}
 
 void UInventoryMenu::OnScroll(const FInputActionValue& Value)
 {
@@ -68,11 +47,14 @@ void UInventoryMenu::OnScroll(const FInputActionValue& Value)
 
 void UInventoryMenu::exit()
 {
+    OnInventoryCloseSignature.Broadcast(this);
     if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent)) {
 
         EnhancedInputComponent->ClearBindingsForObject(this);
     }
+    
     Hud->hideInventoryMenu();
+    
 }
 
 void UInventoryMenu::updateItem(UItemInstance* item)
@@ -84,31 +66,19 @@ void UInventoryMenu::updateItem(UItemInstance* item)
     }
 }
 
-void UInventoryMenu::clearItems()
+bool UInventoryMenu::setPlayerSelected(bool playerSelected, bool forceRefresh)
 {
-    ItemListView->ClearListItems();
-}
-
-void UInventoryMenu::addAllItems()
-{
-    for (auto& entry : ItemListView->Inv->Items) {
-        ItemListView->AddItem(entry.Value);
+    EInventoryPage desiredPage = playerSelected ? EInventoryPage::PLAYER : EInventoryPage::NPC;
+    if (forceRefresh || Page != desiredPage) {
+        if (UInventory* inv = playerSelected ? PlayerInv : NpcInv) {
+            Page = desiredPage;
+            PlayerInv->InventoryWidget = playerSelected ? this : nullptr;
+            if (NpcInv != nullptr)NpcInv->InventoryWidget = playerSelected ? nullptr : this;
+            check(inv != nullptr);
+            ItemListView->Inv = inv;
+            resetItems();
+            return true;
+        }
     }
-    if (ItemListView->GetNumItems() > 0) {
-        ItemListView->SetSelectedIndex(0);
-    }
-
-}
-
-void UInventoryMenu::setPlayerSelected(bool playerSelected)
-{
-    check(playerSelected || NpcInv != nullptr);
-    Page = playerSelected ? EInventoryPage::PLAYER : EInventoryPage::NPC;
-    UInventory* inv = playerSelected ? PlayerInv :  NpcInv;
-    PlayerInv->InventoryWidget = playerSelected ? this : nullptr;
-    if (NpcInv != nullptr)NpcInv->InventoryWidget = playerSelected ? nullptr : this;
-    check(inv != nullptr);
-    ItemListView->Inv = inv;
-    resetItems();
-   
+    return false;
 }

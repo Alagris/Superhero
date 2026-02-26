@@ -12,7 +12,7 @@ void UItemListEntry::NativeConstruct()
 	Super::NativeConstruct();
 	UListViewBase* owner = GetOwningListView();
 	Parent = Cast<UItemListView>(owner);
-	check(IsValid(Parent));
+	
 }
 
 void UItemListEntry::NativeOnListItemObjectSet(UObject* ListItemObject)
@@ -31,6 +31,7 @@ void UItemListEntry::NativeOnItemSelectionChanged(bool bIsSelected)
 
 FReply UItemListEntry::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
+	
 	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)) {
 		UseItem();
 		return FReply::Handled();
@@ -58,7 +59,7 @@ void UItemListEntry::RefreshItem_Implementation()
 
 void UItemListEntry::UseItem()
 {
-	if (IsValid(Parent)) {
+	if (IsValid(Parent) && IsValid(Item)) {
 		UInventoryMenu* inv = Parent->Root;
 		if (inv->isExchanging()) {
 			if (canAfford()) {

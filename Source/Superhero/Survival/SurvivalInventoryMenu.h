@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/UI/Inventory/InventoryMenu.h"
+#include "Common/UI/Inventory/CompleteInventoryMenu.h"
 #include "SurvivalInventoryMenu.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API USurvivalInventoryMenu : public UInventoryMenu
+class SUPERHERO_API USurvivalInventoryMenu : public UCompleteInventoryMenu
 {
 	GENERATED_BODY()
 	

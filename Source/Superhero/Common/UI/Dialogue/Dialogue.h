@@ -23,7 +23,7 @@ class SUPERHERO_API UDialogue : public UUserWidget
 public:
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 
-	void setup(AGameHUD* HUD, APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
+	void setup(AGameHUD* HUD, APlayerController* PlayerController, UDialogueComponent* Npc, TSoftObjectPtr<UDialogueStage> Stage=nullptr);
 
 
 	UPROPERTY(meta = (BindWidget))

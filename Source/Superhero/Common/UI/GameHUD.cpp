@@ -29,13 +29,13 @@ void AGameHUD::setGameInputMapping()
 	}
 }
 
-bool AGameHUD::showInventoryMenu(UInventory* Inv)
+UInventoryMenu * AGameHUD::showInventoryMenu(UInventory* player, UInventory* npc, bool exchangeForFree, EInventoryPage page)
 {
 	
 	if (InventoryMenuWidget == nullptr && IsValid(InventoryMenuClass)) {
 		APlayerController* PlayerController = GetOwningPlayerController();
 		InventoryMenuWidget = CreateWidget<UInventoryMenu>(GetWorld(), InventoryMenuClass);
-		InventoryMenuWidget->setup(this, PlayerController, Inv);
+		InventoryMenuWidget->setup(this, PlayerController, player, npc, exchangeForFree, page);
 		InventoryMenuWidget->AddToViewport(9998); // Z-order, this just makes it render on the very top.
 		InventoryMenuWidget->SetKeyboardFocus();
 
@@ -44,10 +44,11 @@ bool AGameHUD::showInventoryMenu(UInventory* Inv)
 		//Mode.SetWidgetToFocus(InventoryMenuWidget->TakeWidget());
 		PlayerController->SetInputMode(Mode);
 		PlayerController->SetShowMouseCursor(true);
-		PlayerController->SetPause(true);
+		PlayerController->SetPause(PauseGameWhenInInventory);
 		setStatus();
+		return InventoryMenuWidget;
 	}
-	return false;
+	return nullptr;
 }
 
 bool AGameHUD::showCharacterMenu( AIndoorsSuperhero* Hero)
@@ -68,7 +69,7 @@ bool AGameHUD::showCharacterMenu( AIndoorsSuperhero* Hero)
 	return false;
 }
 
-bool AGameHUD::showDialogue( TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
+bool AGameHUD::showDialogue(class UDialogueComponent * Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
 	if (DialogueWidget == nullptr && IsValid(DialogueWidgetClass)) {
 		APlayerController* PlayerController = GetOwningPlayerController();
@@ -175,6 +176,7 @@ bool AGameHUD::hideInventoryMenu()
 {
 	if (InventoryMenuWidget != nullptr) {
 		APlayerController* PlayerController = GetOwningPlayerController();
+		InventoryMenuWidget->unbindInventories();
 		InventoryMenuWidget->RemoveFromParent();
 		InventoryMenuWidget = nullptr;
 		FInputModeGameOnly Mode;

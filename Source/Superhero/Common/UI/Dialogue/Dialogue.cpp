@@ -4,8 +4,8 @@
 #include "Common/UI/Dialogue/Dialogue.h"
 #include "DialogueStage.h"
 #include "DialogueResponse.h"
-#include "DialogueActor.h"
 #include "DialogueResponseListView.h"
+#include <Common/Inventory/DialogueComponent.h>
 #include <Common/UI/GameHUD.h>
 
 void UDialogue::NativeConstruct()
@@ -24,24 +24,25 @@ FReply UDialogue::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& 
 	return FReply::Unhandled();
 }
 
-void UDialogue::setup(AGameHUD* hud, APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
+void UDialogue::setup(AGameHUD* hud, APlayerController* PlayerController, UDialogueComponent * Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
+	if (Stage.IsNull()) {
+		Stage = Npc->DialogueStage;
+	}
 	this->HUD = hud;
 	ResponseOptions->Root = this;
 	ResponseOptions->Npc = Npc;
 	ResponseOptions->PlayerController = PlayerController;
-	IDialogueActor::Execute_OnDialogueEntered(Npc.GetObject(), PlayerController);
-	//Npc->OnEnterDialogue(player);
+	Npc->DialogueEntered(PlayerController);
 	SetVisibility(ESlateVisibility::Visible);
-	FText NpcName = IDialogueActor::Execute_GetCharacterName(Npc.GetObject());
-	SpeakerName->SetText(NpcName);
+	SpeakerName->SetText(Npc->CharacterName);
 	followUp(Stage);
 }
 
 void UDialogue::closeDialogue()
 {
 	
-	IDialogueActor::Execute_OnDialogueExited(ResponseOptions->Npc.GetObject(), ResponseOptions->PlayerController);
+	ResponseOptions->Npc->DialogueExited(ResponseOptions->PlayerController);
 	HUD->hideDialogue();
 }
 
@@ -54,7 +55,7 @@ void UDialogue::followUp(TSoftObjectPtr<UDialogueStage> Stage)
 		UDialogueStage * s = Stage.LoadSynchronous();
 		SpeakerText->SetText(s->NpcText);
 		if (IsValid(s->Animation)) {
-			IDialogueActor::Execute_OnPlayDialogueAnim(ResponseOptions->Npc.GetObject(), s->Animation);
+			ResponseOptions->Npc->PlayDialogueAnim(s->Animation);
 		}
 		clearOptions();
 		for (int i = 0; i < s->Responses.Num(); i++) {

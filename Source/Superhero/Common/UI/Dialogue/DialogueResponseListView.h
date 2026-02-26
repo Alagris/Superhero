@@ -26,10 +26,10 @@ public:
 	APlayerController* PlayerController;
 
 	UPROPERTY()
-	TScriptInterface<IDialogueActor> Npc;
+	class UDialogueComponent * Npc;
 
 	UPROPERTY()
-	TObjectPtr<UDialogueStage> DialogueStage;
+	UDialogueStage * DialogueStage;
 
 	void chooseOption(TObjectPtr<UDialogueResponse> resp);
 };

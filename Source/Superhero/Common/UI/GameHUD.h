@@ -53,7 +53,8 @@ class SUPERHERO_API AGameHUD : public AHUD
 	TObjectPtr<UInventoryMenu> InventoryMenuWidget;
 
 public:
-
+	UPROPERTY(EditDefaultsOnly, Category = "User Interface")
+	bool PauseGameWhenInInventory=false;
 
 	UPROPERTY()
 	UUIInputMappingContext* UIInput;
@@ -71,11 +72,11 @@ public:
 		triggerInventory();
 	}
 
-	bool showInventoryMenu( class UInventory* Inv);
+	UInventoryMenu* showInventoryMenu( class UInventory* player, class UInventory* npc = nullptr, bool exchangeForFree = false, EInventoryPage page = EInventoryPage::PLAYER);
 
 	bool showCharacterMenu( class AIndoorsSuperhero * Hero);
 
-	bool showDialogue( TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
+	bool showDialogue(class UDialogueComponent* Npc, TSoftObjectPtr<UDialogueStage> Stage=nullptr);
 
 	void triggerInventory();
 

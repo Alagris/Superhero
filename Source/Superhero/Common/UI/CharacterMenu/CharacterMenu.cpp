@@ -15,7 +15,7 @@ void UCharacterMenu::setup(AGameHUD* hud, APlayerController* c, AIndoorsSuperher
 
 void UCharacterMenu::OnTalkClick()
 {
-	Hud->showDialogue(Hero, Hero->DialogueStage);
+	Hud->showDialogue(Hero->Dialogue);
 }
 
 void UCharacterMenu::OnGiveClick()

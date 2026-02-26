@@ -8,9 +8,11 @@
 #include <Common/Props/Actor/ItemActor.h>
 #include "ItemListView.h"
 #include "InventoryPage.h"
+#include <Common/Props/Crafting/Recipes.h>
 #include "InventoryMenu.generated.h"
 
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnInventoryCloseSignature, class UInventoryMenu* /* inventory */);
 /**
  * 
  */
@@ -20,14 +22,17 @@ class SUPERHERO_API UInventoryMenu : public UUserWidget
 	GENERATED_BODY()
 
 	
-
+protected:
 
 	virtual void NativeConstruct() override;
 
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-
 	virtual void BeginDestroy() override {
 		Super::BeginDestroy();
+		unbindInventories();
+	}
+public:
+
+	void unbindInventories() {
 		if (NpcInv != nullptr) {
 			NpcInv->InventoryWidget = nullptr;
 		}
@@ -35,7 +40,11 @@ class SUPERHERO_API UInventoryMenu : public UUserWidget
 			PlayerInv->InventoryWidget = nullptr;
 		}
 	}
-public:
+
+	FOnInventoryCloseSignature OnInventoryCloseSignature;
+
+	UPROPERTY()
+	URecipes* Recipes;
 
 	UPROPERTY()
 	UInventory* PlayerInv;
@@ -68,11 +77,7 @@ public:
 		return isTrading() && Page == EInventoryPage::NPC;
 	}
 
-	inline void setPage(EInventoryPage page) {
-		if (Page != page) {
-			setPageForce(page);
-		}
-	}
+	
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UItemListView* ItemListView;
@@ -80,7 +85,6 @@ public:
 
 	virtual bool setup(class AGameHUD* hud, APlayerController* playerController, UInventory* player, UInventory* npc=nullptr, bool exchangeForFree = false, EInventoryPage page = EInventoryPage::PLAYER);
 
-	virtual void onItemSelected(UItemInstance* item);
 
 	void OnUp(const struct FInputActionValue& Value) {
 		moveSelection(-1);
@@ -146,33 +150,43 @@ public:
 		}
 	}
 	void updateItem(UItemInstance* item);
-	void clearItems();
-	void addAllItems();
+	void clearItems() {
+		ItemListView->ClearListItems();
+	}
+	void addAllItems() {
+		for (auto& entry : ItemListView->Inv->Items) {
+			ItemListView->AddItem(entry.Value);
+		}
+		if (ItemListView->GetNumItems() > 0) {
+			ItemListView->SetSelectedIndex(0);
+		}
+	}
 	void resetItems() {
 		clearItems();
 		addAllItems();
 	}
-protected:
-	virtual void setPlayerSelected(bool playerSelected);
-	virtual bool openCrafting() {
+
+	virtual bool setPlayerSelected(bool playerSelected, bool forceRefresh=false);
+	virtual bool openCrafting(bool forceRefresh=false) {
 		return false;
 	}
-private:
 	
 	
-	inline void setPageForce(EInventoryPage page) {
-		switch (page) {
-		case EInventoryPage::PLAYER:
-			setPlayerSelected(true);
-			break;
-		case EInventoryPage::NPC:
-			setPlayerSelected(false);
-			break;
-		case EInventoryPage::CRAFTING:
-			if (!openCrafting()) {
-				setPlayerSelected(true);
+	inline void setPage(EInventoryPage page, bool forceRefresh=false) {
+		if (forceRefresh || Page != page) {
+			switch (page) {
+			case EInventoryPage::PLAYER:
+				setPlayerSelected(true, forceRefresh);
+				break;
+			case EInventoryPage::NPC:
+				setPlayerSelected(false, forceRefresh);
+				break;
+			case EInventoryPage::CRAFTING:
+				if (!openCrafting(forceRefresh)) {
+					setPlayerSelected(true, forceRefresh);
+				}
+				break;
 			}
-			break;
 		}
 	}
 };

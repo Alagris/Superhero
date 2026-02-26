@@ -5,7 +5,6 @@
 #include "Indoors/IndoorsPawn.h"
 #include <EnhancedInputComponent.h>
 #include "Common/Interact/Interactable.h"
-#include "Common/UI/Dialogue/DialogueActor.h"
 #include "Common/UI/Dialogue/DialogueStage.h"
 #include <EnhancedInputSubsystems.h>
 #include <Common/UI/GameHUD.h>
@@ -200,7 +199,7 @@ bool AIndoorsPlayerController::UnpauseGame()
 	return false;
 }
 
-bool AIndoorsPlayerController::OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage)
+bool AIndoorsPlayerController::OpenDialogue(APlayerController* PlayerController, class UDialogueComponent* Npc, TSoftObjectPtr<UDialogueStage> Stage)
 {
 	if (AGameHUD* hud = Cast<AGameHUD>(GetHUD())) {
 		hud->showDialogue( Npc, Stage);

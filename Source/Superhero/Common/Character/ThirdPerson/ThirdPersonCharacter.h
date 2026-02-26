@@ -49,6 +49,7 @@ class AThirdPersonCharacter : public ACharacter
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category ="Components", meta = (AllowPrivateAccess = "true"))
 	UInteractPhysicsHandleComponent * PhysicsHandle;
+
 	
 	virtual void Tick(float DeltaTime) override;
 
@@ -171,7 +172,6 @@ public:
 	/** Handles move inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoMove(float Right, float Forward);
-
 
 
 

@@ -125,7 +125,7 @@ void AThirdPersonCharacter::TriggerInteractStart(const FInputActionValue& Value)
 	
 	TArray<TEnumAsByte<EObjectTypeQuery>> objectTypesArray;
 	objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Visibility));
-	//objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+	objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
 	objectTypesArray.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_Pawn));
 	if (CastRay(PhysicsHandle->HitResult, InteractDistance, objectTypesArray)) {
 		PhysicsHandle->InteractStart();

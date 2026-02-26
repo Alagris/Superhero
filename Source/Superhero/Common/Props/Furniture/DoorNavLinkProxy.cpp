@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Common/Props/DoorNavLinkProxy.h"
+#include "DoorNavLinkProxy.h"
 #include "NavLinkCustomComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Door.h"

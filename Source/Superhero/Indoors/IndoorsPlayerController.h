@@ -9,7 +9,6 @@
 #include "ISpudObject.h"
 #include "IndoorsPlayerController.generated.h"
 
-class IDialogueActor;
 class UDialogueStage;
 class AIndoorsSuperhero;
 /**
@@ -89,7 +88,7 @@ public:
 	bool PauseGame();
 	bool UnpauseGame();
 	bool CloseDialogue();
-	bool OpenDialogue(APlayerController* PlayerController, TScriptInterface<IDialogueActor> Npc, TSoftObjectPtr<UDialogueStage> Stage);
+	bool OpenDialogue(APlayerController* PlayerController, class UDialogueComponent* Npc, TSoftObjectPtr<UDialogueStage> Stage);
 	void OnSuperHeroSelected(class AIndoorsSuperhero* hero);
 	
 	
