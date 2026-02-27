@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	class UInventory* Inv;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	class UNameComponent* Name;
+
 	virtual void OnClose(class UInventoryMenu* menu);
 	virtual void OnOpen(class UInventoryMenu* menu);
 	// Called every frame

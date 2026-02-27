@@ -2,6 +2,7 @@
 
 
 #include "Common/Inventory/Health.h"
+#include <Kismet/KismetMathLibrary.h>
 
 // Sets default values for this component's properties
 UHealth::UHealth()
@@ -9,7 +10,7 @@ UHealth::UHealth()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
+	bWantsInitializeComponent = true;
 	// ...
 }
 
@@ -24,10 +25,18 @@ void UHealth::BeginPlay()
 }
 
 
+
 // Called every frame
 void UHealth::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (HealthBar != nullptr) {
+		HealthBar->Health->SetPercent(getHealthPercent());
+		if (APlayerController* c = GetWorld()->GetFirstPlayerController()) {
+			FVector camPos = c->PlayerCameraManager->GetCameraLocation();
+			FRotator rot = UKismetMathLibrary::FindLookAtRotation(GetOwner()->GetActorLocation(), camPos);
+			HealthBarComponent->SetWorldRotation(rot);
+		}
+	}
 
-	// ...
 }

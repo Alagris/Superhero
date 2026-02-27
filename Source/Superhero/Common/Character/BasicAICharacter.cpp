@@ -18,6 +18,13 @@ ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer
 	UAdvancedMovementComponent* a = Cast<UAdvancedMovementComponent>(GetCharacterMovement());
 	a->setUseAccelerationForPathFollowing(true);
 
+	USkeletalMeshComponent* m = GetMesh();
+	m->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	m->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	m->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	m->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Ignore);
+	m->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
 
 }
 

@@ -35,10 +35,21 @@ public:
 
 	void InteractStart() {
 		InteractedActor = HitResult.GetActor();
-		auto h = HitResult.GetHitObjectHandle();
-		auto c = HitResult.GetComponent();
+		FActorInstanceHandle h = HitResult.GetHitObjectHandle();
+		UPrimitiveComponent * c = HitResult.GetComponent();
 		physicshandleDistance = HitResult.Distance;
-		GrabComponentAtLocationWithRotation(c, "", h.GetLocation(), h.GetRotation());
+		FVector loc = HitResult.Location;
+		FRotator rot = c->GetComponentRotation();
+		/*
+		if (USkeletalMeshComponent* sk = Cast<USkeletalMeshComponent>(c)) {
+			loc = c->GetComponentLocation();
+		}
+		else {
+			loc = h.GetLocation();
+			rot = h.GetRotation();
+		}
+		*/
+		GrabComponentAtLocationWithRotation(c, "", loc, rot);
 	}
 
 	void InteractEnd() {

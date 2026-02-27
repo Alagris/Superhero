@@ -38,7 +38,7 @@ void AItemActorNiagaraProjectile::onProjectileHit(UPrimitiveComponent* HitCompon
 	//if (OtherActor == Shooter) {
 	//	return;
 	//}
-	if (OtherActor != nullptr && OtherActor->Implements<UHittable>()) {
+	if (IsValid(OtherActor) && OtherActor->Implements<UHittable>()) {
 
 		IHittable::Execute_OnHit(OtherActor, this, Shooter, RangedWeapon, (float)hitSpeed(), NormalImpulse, Hit);
 	}

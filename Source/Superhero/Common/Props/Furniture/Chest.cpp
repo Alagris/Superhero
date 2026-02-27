@@ -3,6 +3,7 @@
 
 #include "Common/Props/Furniture/Chest.h"
 #include <Common/UI/GameHUD.h>
+#include <Common/Inventory/NameComponent.h>
 #include <Kismet/GameplayStatics.h>
 
 // Sets default values
@@ -11,6 +12,8 @@ AChest::AChest()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	Inv = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+	Name = CreateDefaultSubobject<UNameComponent>(TEXT("Name"));
+	Name->CharacterName = FText::FromString("Chest");
 }
 
 // Called when the game starts or when spawned
