@@ -10,6 +10,8 @@ AMainCharacter::AMainCharacter(const FObjectInitializer& ObjectInitializer) : Su
 	ClothingSys = CreateDefaultSubobject<UClothingSystem>(TEXT("Inventory"));
 	Health = CreateDefaultSubobject<UHealth>(TEXT("Health"));
 	Dialogue = CreateDefaultSubobject<UNameComponent>(TEXT("Dialogue"));
+	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat"));
+
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
 

@@ -6,44 +6,34 @@
 #include "Common/Inventory/Inventory.h"
 #include "Common/Props/Actor/ItemActorProjectile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Common/Combat/CombatComponent.h"
 #include "Common/Character/Movement/AdvancedMovementComponent.h"
 
-bool UGunItem::attackEnd(UItemInstance* instance, bool isPrimary, bool isHeavy) const
+bool UGunItem::attackEnd(UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const
 {
-   
     if (IsValid(instance->Owner)) {
-        if (UAdvancedMovementComponent* m = instance->Owner->GetOwner()->GetComponentByClass<UAdvancedMovementComponent>()) {
-            if (isPrimary) {
-                m->setNotWantsToAttack();
-            }
-            else {
-                m->endAiming();
-            }
+        if (isPrimary) {
+            combat->setNotWantsToAttack();
+        }
+        else {
+            combat->endAiming();
         }
     }
     return true;
 }
 
-void UGunItem::attackTrigger(UItemInstance* instance, bool isHeavy) const
+void UGunItem::attackTrigger(UItemInstance* instance, class UCombatComponent* combat, bool isHeavy) const
 {
-    Super::attackTrigger(instance, isHeavy);
+    Super::attackTrigger(instance, combat, isHeavy);
     if (OnlyFireWhenAiming) {
-        if (UAdvancedMovementComponent* m = instance->Owner->GetOwner()->GetComponentByClass<UAdvancedMovementComponent>()) {
-            if (!m->IsAiming) {
-                return;
-            }
+        if (!combat->IsAiming()) {
+            return;
         }
     }
     FTransform t;
     if (BarrelTipSocket.IsValid()) {
         
-        if (UStaticMeshComponent* sta = Cast<UStaticMeshComponent>(instance->SceneComp)) {
-            t = sta->GetSocketTransform(BarrelTipSocket);
-        }
-        else if (USkeletalMeshComponent* skel = Cast<USkeletalMeshComponent>(instance->SceneComp)) {
-            t = skel->GetSocketTransform(BarrelTipSocket);
-        }
-        else {
+        if (!instance->getSocketTransform(BarrelTipSocket, t)) {
             return;
         }
     }
@@ -66,17 +56,14 @@ AActor* UGunItem::spawnProjectile(UItemInstance* instance, bool isHeavy, FTransf
     return p;
 }
 
-bool UGunItem::attackStart(UItemInstance* instance, bool isPrimary, bool isHeavy) const
+bool UGunItem::attackStart(UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const
 {
-    
     if (IsValid(instance->Owner)) {
-        if (UAdvancedMovementComponent* m = instance->Owner->GetOwner()->GetComponentByClass<UAdvancedMovementComponent>()) {
-            if (isPrimary) {
-                m->setWantsToAttack(instance, isHeavy);
-            }
-            else {
-                m->startAiming();
-            }
+        if (isPrimary) {
+            combat->setWantsToAttack(instance, combat->getCombo(ComboId), isPrimary, isHeavy);
+        }
+        else {
+            combat->startAiming();
         }
     }
     return true;

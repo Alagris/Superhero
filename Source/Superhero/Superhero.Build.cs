@@ -51,6 +51,7 @@ public class Superhero : ModuleRules
 			"Superhero/Variant_TwinStick/UI"
 		});
 
+        OptimizeCode = CodeOptimization.Never;
         AddSPUD();
         // Uncomment if you are using Slate UI
         // PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

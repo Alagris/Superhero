@@ -31,13 +31,11 @@ public:
 	FName HandleSocket;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName ShootingAnim;
+	FName ComboId;
 
 	virtual float getDamage() const { return Damage; }
 
 	virtual bool use(AActor* target, class UItemInstance* instance) const override;
-
-	virtual FName getNextAttackAnimMontage(int& state, bool isHeavy) const override { return ShootingAnim; };
 
 	virtual void restore(class UItemInstance* instance, class USpudState* State, class USpudStateCustomData* CustomData) const override;
 

@@ -9,7 +9,9 @@
 #include <Common/Inventory/NameComponent.h>
 #include <Common/Interact/Hittable.h>
 #include <Common/Inventory/Health.h>
+#include <Common/Combat/CombatComponent.h>
 #include "MainCharacter.generated.h"
+
 
 
 /**
@@ -34,6 +36,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UNameComponent* Dialogue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	UCombatComponent* Combat;
 
 	virtual void OnHit_Implementation(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) {
 		Health->ReceiveHit(projectile, shooter, rangedWeapon, hitSpeed, NormalImpulse, Hit);

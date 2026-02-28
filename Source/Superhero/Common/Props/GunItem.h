@@ -31,11 +31,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool OnlyFireWhenAiming=false;
 
-	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const;
+	virtual bool attackStart(class UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const;
 
-	virtual bool attackEnd(class UItemInstance* instance, bool isPrimary, bool isHeavy) const;
+	virtual bool attackEnd(class UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const;
 
-	virtual void attackTrigger(class UItemInstance* instance, bool isHeavy) const override;
+	virtual void attackTrigger(class UItemInstance* instance, class UCombatComponent* combat, bool isHeavy) const override;
 
 	virtual AActor * spawnProjectile(class UItemInstance* instance, bool isHeavy, FTransform & trans) const;
 };

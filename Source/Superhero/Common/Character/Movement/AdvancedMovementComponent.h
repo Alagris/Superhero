@@ -12,18 +12,7 @@ struct FInputActionValue;
 class UItemInstance;
 
 
-USTRUCT(BlueprintType)
-struct SUPERHERO_API FCharacterAnim
-{
-	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<class UAnimMontage> Anim;
-
-	
-
-
-};
 /**
  * 
  */
@@ -34,8 +23,6 @@ class SUPERHERO_API UAdvancedMovementComponent : public UBasicCharacterMovementC
 	
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, FCharacterAnim> AnimationCollection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float WalkSpeed = 200;
@@ -55,13 +42,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool IsAiming=false;
 
-	UPROPERTY(BlueprintReadOnly)
-	UItemInstance * WantsToAttack=nullptr;
-
-	int AttackState=0;
-	bool CanPlayNextAttack;
-	FName LastPlayerAttackName;
-	class UAnimMontage* LastPlayerAttackMontage;
 
 	void startAiming() {
 		IsAiming = true;
@@ -73,36 +53,7 @@ public:
 		ResetSpeed();
 	}
 
-	void setNotWantsToAttack() {
-		WantsToAttack = nullptr;
-		AttackState = 0;
-	}
 
-	void setWantsToAttack(UItemInstance* item, bool isHeavy) {
-		WantsToAttack = item;
-		if (CanPlayNextAttack || !isStillPlayingAttackAnim()) {
-			ExecuteNextAttack(false);
-		}
-		
-	}
-	bool wantsToAttack() const{
-		return WantsToAttack != nullptr;
-	}
-
-	virtual void OnNextAttackReady() {
-		if (wantsToAttack()) {
-			ExecuteNextAttack(false);
-		}
-		else {
-			CanPlayNextAttack = true;
-		}
-	}
-
-	void ExecuteNextAttack(bool isHeavy);
-
-	bool isStillPlayingAttackAnim() {
-		return IsPlayingAnimMontage(LastPlayerAttackMontage);
-	}
 
 	inline bool IsPlayingAnimMontage(class UAnimMontage* AnimMontage) {
 		return getAnimInstance()->Montage_IsPlaying(AnimMontage);

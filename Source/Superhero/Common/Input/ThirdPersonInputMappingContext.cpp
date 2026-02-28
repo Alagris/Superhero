@@ -3,6 +3,7 @@
 #include "ThirdPersonInputMappingContext.h"
 #include "Common/Character/ThirdPerson/ThirdPersonCharacter.h"
 #include <EnhancedInputComponent.h>
+#include <Common/Combat/CombatComponent.h>
 #include <Common/Character/Movement/AdvancedMovementComponent.h>
 #include <Common/Inventory/ClothingSystem.h>
 
@@ -28,11 +29,11 @@ void UThirdPersonInputMappingContext::BindToThirdPerson(UEnhancedInputComponent*
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, m, &UAdvancedMovementComponent::TriggerEndRun);
 		EnhancedInputComponent->BindAction(SlowWalkAction, ETriggerEvent::Started, m, &UAdvancedMovementComponent::ToggleSlowWalk);
 	}
-	if (UClothingSystem* m = a->GetComponentByClass<UClothingSystem>()) {
-		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Started, m, &UClothingSystem::TriggerLeftAttackStart);
-		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Completed, m, &UClothingSystem::TriggerLeftAttackEnd);
-		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Started, m, &UClothingSystem::TriggerRightAttackStart);
-		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Completed, m, &UClothingSystem::TriggerRightAttackEnd);
+	if (UCombatComponent* m = a->GetComponentByClass<UCombatComponent>()) {
+		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Started, m, &UCombatComponent::TriggerLeftAttackStart);
+		EnhancedInputComponent->BindAction(AttackLeftAction, ETriggerEvent::Completed, m, &UCombatComponent::TriggerLeftAttackEnd);
+		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Started, m, &UCombatComponent::TriggerRightAttackStart);
+		EnhancedInputComponent->BindAction(AttackRightAction, ETriggerEvent::Completed, m, &UCombatComponent::TriggerRightAttackEnd);
 	}
 	
 }

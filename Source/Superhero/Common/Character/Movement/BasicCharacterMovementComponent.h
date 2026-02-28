@@ -15,6 +15,8 @@ class SUPERHERO_API UBasicCharacterMovementComponent : public UCharacterMovement
 {
 	GENERATED_BODY()
 public:
+
+
 	void setUseAccelerationForPathFollowing(bool use) {
 		NavMovementProperties.bUseAccelerationForPaths = use;
 	}

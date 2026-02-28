@@ -39,6 +39,19 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class USceneComponent* SceneComp;
 
+	bool getSocketTransform(FName socketName, FTransform & t) {
+		if (UStaticMeshComponent* sta = Cast<UStaticMeshComponent>(SceneComp)) {
+			t = sta->GetSocketTransform(socketName);
+			return true;
+		}
+		else if (USkeletalMeshComponent* skel = Cast<USkeletalMeshComponent>(SceneComp)) {
+			t = skel->GetSocketTransform(socketName);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	float getDamageDealt(class UHealth * victim, AActor * attacker, float hitStrength) {
 		return ItemType->getDamageDealt(victim, attacker, this, hitStrength);
 	}
@@ -78,20 +91,17 @@ public:
 	inline bool use(AActor * target) {
 		return ItemType->use(target, this);
 	}
-	inline bool attackStart(bool isPrimary, bool isHeavy) { 
-		return ItemType->attackStart(this, isPrimary, isHeavy);
+	inline bool attackStart(class UCombatComponent* combat, bool isPrimary, bool isHeavy) {
+		return ItemType->attackStart(this, combat, isPrimary, isHeavy);
 	}
-	inline bool attackEnd( bool isPrimary, bool isHeavy) {
-		return ItemType->attackEnd(this, isPrimary, isHeavy);
+	inline bool attackEnd(class UCombatComponent* combat, bool isPrimary, bool isHeavy) {
+		return ItemType->attackEnd(this, combat, isPrimary, isHeavy);
 	}
 	bool setAnyMesh(struct FAnyMesh& m, UObject* outer) const {
 		return ItemType->setAnyMesh(m, outer);
 	}
-	FName getNextAttackAnimMontage(int& state, bool isHeavy) {
-		return ItemType->getNextAttackAnimMontage(state, isHeavy);
-	};
-	void attackTrigger(bool isHeavy) {
-		ItemType->attackTrigger(this, isHeavy);
+	void attackTrigger(class UCombatComponent* combat, bool isHeavy) {
+		ItemType->attackTrigger(this, combat, isHeavy);
 	}
 
 	UItemInstance* remove(int quantity = 1, bool spawnPopped = true);

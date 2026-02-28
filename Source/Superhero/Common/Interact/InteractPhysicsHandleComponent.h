@@ -40,15 +40,6 @@ public:
 		physicshandleDistance = HitResult.Distance;
 		FVector loc = HitResult.Location;
 		FRotator rot = c->GetComponentRotation();
-		/*
-		if (USkeletalMeshComponent* sk = Cast<USkeletalMeshComponent>(c)) {
-			loc = c->GetComponentLocation();
-		}
-		else {
-			loc = h.GetLocation();
-			rot = h.GetRotation();
-		}
-		*/
 		GrabComponentAtLocationWithRotation(c, "", loc, rot);
 	}
 

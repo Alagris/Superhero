@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Inventory.h"
-#include "Common/Props/ClothingItem.h"
 #include "Any/AnyMesh.h"
+#include "Common/Props/ClothingItem.h"
 #include "ClothingSystem.generated.h"
 
 class UItemInstance;
@@ -78,7 +78,7 @@ protected:
 
 	uint8 OccupiedClothingSlots = 0;
 	uint8 OccupiedDeviousClothingSlots = 0;
-
+	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -136,46 +136,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FEquippedHand HandR = FEquippedHand("r_hand_anchorSocket");
 
+
 	FEquippedHand& getHand(bool leftHand) {
 		return leftHand ? HandL : HandR;
 	}
 
-	UItemInstance* getPrimaryEquippedInHand() const {
-		return HandR.Item == nullptr ? HandL.Item : HandR.Item;
+	UItemInstance* getEquippedInLeftHand() const {
+		return HandL.Item;
 	}
 
-	UItemInstance* getSecondaryEquippedInHand() const {
-		return HandL.Item == nullptr ? HandR.Item : HandL.Item;
+	UItemInstance* getEquippedInRightHand() const {
+		return HandR.Item;
 	}
 
-	UItemInstance* attackPrimaryEnd(bool heavy) const {
-		UItemInstance* i = getPrimaryEquippedInHand();
-		if (i != nullptr) {
-			i->attackEnd(true, heavy);
-		}
-		return i;
-	}
-	UItemInstance* attackSecondaryEnd(bool heavy) const {
-		UItemInstance* i = getSecondaryEquippedInHand();
-		if (i != nullptr) {
-			i->attackEnd(false, heavy);
-		}
-		return i;
-	}
-	UItemInstance* attackPrimaryStart(bool heavy) const {
-		UItemInstance* i = getPrimaryEquippedInHand();
-		if (i != nullptr) {
-			i->attackStart(true, heavy);
-		}
-		return i;
-	}
-	UItemInstance* attackSecondaryStart(bool heavy) const {
-		UItemInstance* i = getSecondaryEquippedInHand();
-		if (i != nullptr) {
-			i->attackStart(false, heavy);
-		}
-		return i;
-	}
 	bool canEquipClothes(const UClothingItem* type) const
 	{
 		return (OccupiedClothingSlots & uint8(type->Slot)) == 0;
@@ -198,18 +171,6 @@ public:
 		Super::clearInventory();
 	}
 
-	void TriggerLeftAttackStart(const struct FInputActionValue& Value){
-		attackPrimaryStart(false);
-	}
-	void TriggerLeftAttackEnd(const struct FInputActionValue& Value){
-		attackPrimaryEnd(false);
-	}
-	void TriggerRightAttackStart(const struct FInputActionValue& Value){
-		attackSecondaryStart(false);
-	}
-	void TriggerRightAttackEnd(const struct FInputActionValue& Value){
-		attackSecondaryEnd(false);
-	}
 
 private:
 	void RemoveClothingMesh(UItemInstance* item, bool fireEvents);

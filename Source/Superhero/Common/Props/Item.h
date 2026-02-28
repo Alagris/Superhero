@@ -61,13 +61,12 @@ public:
 	}
 	virtual bool use(AActor* target, class UItemInstance* instance) const { return false; };
 
-	virtual bool attackStart(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
+	virtual bool attackStart(class UItemInstance* instance, class UCombatComponent * combat, bool isPrimary, bool isHeavy) const { return false; };
 
-	virtual void attackTrigger(class UItemInstance* instance, bool isHeavy) const { };
+	virtual void attackTrigger(class UItemInstance* instance, class UCombatComponent* combat, bool isHeavy) const { };
 
-	virtual bool attackEnd(class UItemInstance* instance, bool isPrimary, bool isHeavy) const { return false; };
+	virtual bool attackEnd(class UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const { return false; };
 
-	virtual FName getNextAttackAnimMontage(int & state, bool isHeavy) const { return NAME_None; };
 
 	virtual UItemInstance * create(UObject* outer, int count = 1) const;
 
