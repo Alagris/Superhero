@@ -2,6 +2,7 @@
 
 
 #include "CombatComponent.h"
+#include "Common/Props/Projectiles/ProjectileType.h"
 
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
@@ -26,16 +27,27 @@ void UCombatComponent::ExecuteNextAttack(bool isHeavy)
 			CurrentExecutedCombo = CurrentExecutedCombo->getNext(WantsToAttackPrimary, isHeavy);
 		}
 		if (IsValid(CurrentExecutedCombo)) {
-			LastPlayerAttackMontage = CurrentExecutedCombo->AttackAnim;
-			if (IsValid(LastPlayerAttackMontage)) {
+			LastPlayedAttackMontage = CurrentExecutedCombo->AttackAnim;
+			if (IsValid(LastPlayedAttackMontage)) {
 				CanPlayNextAttack = false;
-				PlayAnimMontage(LastPlayerAttackMontage);
+				PlayAnimMontage(LastPlayedAttackMontage);
 				return;
 			}
 		}
 		setNotWantsToAttack();
 	}
 }
+
+void UCombatComponent::shootFromCharacterSocket(FName socket, UProjectileType* overwriteProjectile)
+{
+	if (overwriteProjectile == nullptr) {
+		overwriteProjectile = UnarmedProjectile;
+	}
+	if(IsValid(overwriteProjectile)){
+		overwriteProjectile->shootFromSkeletalSocket(socket, Mesh, nullptr, AutoAimTarget);
+	}
+}
+
 void UCombatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
@@ -43,6 +55,7 @@ void UCombatComponent::InitializeComponent()
 	Movement = GetOwner()->GetComponentByClass<UAdvancedMovementComponent>();
 	if (ACharacter* c = Cast<ACharacter>(GetOwner())) {
 		Mesh = c->GetMesh();
+		Mesh->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &UCombatComponent::OnAttackMontageEnd);
 	}
 	if (!IsValid(Mesh)) {
 		check(false);

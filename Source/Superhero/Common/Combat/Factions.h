@@ -18,6 +18,9 @@ struct FFactionRelationship {
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UFaction* Second;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TEnumAsByte<ETeamAttitude::Type> Attitude;
+
 };
 
 UCLASS()
@@ -30,61 +33,71 @@ public:
 	TArray<UFaction*> Factions;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FFactionRelationship> Friends;
+	TArray<FFactionRelationship> Attitudes;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FFactionRelationship> Enemies;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TArray<TEnumAsByte<ETeamAttitude::Type>> AttitueMatrix;
 
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	
 #endif
-
-	template<typename T>
-	static void AddIfAbsent(TArray<T>& arr, T elem) {
-		if (IsValid(elem) && !arr.Contains(elem)) {
-			arr.Add(elem);
+	int getSymmetricalIndex(FFactionRelationship& r) {
+		return getIndex(r.Second, r.First);
+	}
+	int getIndex(FFactionRelationship& r) {
+		return getIndex(r.First, r.Second);
+	}
+	int getIndex(UFaction* a, UFaction* b) {
+		return getIndex(a->FactionIndex, b->FactionIndex);
+	}
+	int getIndex(int a,int b) {
+		return a * Factions.Num() + b;
+	}
+	void AddIfAbsent(UFaction * fac) {
+		if (IsValid(fac) && !Factions.Contains(fac)) {
+			Factions.Add(fac);
 		}
 	}
-	void updateFriends() {
-		ensureAllFactionsArePresent(Friends);
-		for (UFaction* f : Factions) {
-			f->Friends.Empty();
+	void update() {
+		for (FFactionRelationship& r : Attitudes) {
+			AddIfAbsent(r.First);
+			AddIfAbsent(r.Second);
 		}
-		for (FFactionRelationship& r : Friends) {
-			if (IsValid(r.First) && IsValid(r.Second)) {
-				AddIfAbsent(r.First->Friends, r.Second);
-				AddIfAbsent(r.Second->Friends, r.First);
-			}
-		}
-	}
-
-	void updateEnemies() {
-		ensureAllFactionsArePresent(Enemies);
-		for (UFaction* f : Factions) {
-			f->Enemies.Empty();
-		}
-		for (FFactionRelationship& r : Enemies) {
-			if (IsValid(r.First) && IsValid(r.Second)) {
-				AddIfAbsent(r.First->Enemies, r.Second);
-				AddIfAbsent(r.Second->Enemies, r.First);
-			}
-		}
-	}
-
-	
-	void ensureAllFactionsArePresent(TArray<FFactionRelationship>& e) {
-		for (FFactionRelationship & r : e) {
-			AddIfAbsent(Factions, r.First);
-			AddIfAbsent(Factions, r.Second);
-		}
-		for (int i = Factions.Num()-1; i >= 0; i--) {
+		for (int i = Factions.Num() - 1; i >= 0; i--) {
 			if (!IsValid(Factions[i])) {
 				Factions.RemoveAtSwap(i);
 			}
 		}
+		for (int i = 0; i < Factions.Num();i++) {
+			Factions[i]->FactionIndex = i;
+			Factions[i]->TeamId = i;
+			Factions[i]->Owner = this;
+		}
+		AttitueMatrix.Empty();
+		for (int i = 0; i < Factions.Num() * Factions.Num(); i++) {
+			AttitueMatrix.Add(ETeamAttitude::Neutral);
+		}
+		for (int i = 0; i < Factions.Num() ; i++) {
+			AttitueMatrix[getIndex(i,i)] = ETeamAttitude::Friendly;
+		}
+		for (int i = 0; i < Attitudes.Num(); i++) {
+			FFactionRelationship & r = Attitudes[i];
+			int idx = getIndex(r);
+			AttitueMatrix[idx] = r.Attitude;
+			idx = getSymmetricalIndex(r);
+			AttitueMatrix[idx] = r.Attitude;
+		}
 		
 	}
+
+	ETeamAttitude::Type getAttitude(UFaction* a, UFaction* b) {
+		if (IsValid(b) && IsValid(a)) {
+			return AttitueMatrix[getIndex(a,b)];
+		}
+		return ETeamAttitude::Neutral;
+	}
+	
 };
 

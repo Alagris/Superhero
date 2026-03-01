@@ -5,6 +5,11 @@
 #include "Common/Inventory/Inventory.h"
 #include "Common/Props/Actor/ItemActorStatic.h"
 
+AActor* UItemInstance::getActorOwner() const
+{
+	return Owner == nullptr ? nullptr : Owner->GetOwner();
+}
+
 UItemInstance* UItemInstance::remove(int quantity, bool spawnPopped)
 {
 	if (IsValid(Owner)) {

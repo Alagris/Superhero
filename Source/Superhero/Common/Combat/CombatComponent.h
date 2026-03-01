@@ -5,20 +5,23 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "AttackCombo.h"
+#include "ISpudObject.h"
 #include <Common/Inventory/ClothingSystem.h>
 #include <Common/Character/Movement/AdvancedMovementComponent.h>
 #include "CombatComponent.generated.h"
+
+DECLARE_DELEGATE_OneParam(FOnAttackEndSignature, class UCombatComponent * /* combat */);
 
 
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SUPERHERO_API UCombatComponent : public UActorComponent
+class SUPERHERO_API UCombatComponent : public UActorComponent, public ISpudObject
 {
 	GENERATED_BODY()
 
 	bool CanPlayNextAttack=true;
-	class UAnimMontage* LastPlayerAttackMontage;
+	class UAnimMontage* LastPlayedAttackMontage;
 	bool WantsToAttack = false;
 	bool WantsToAttackPrimary = false;
 	bool WantsToAttackSecondary = false;
@@ -29,7 +32,7 @@ public:
 	UCombatComponent();
 	virtual void InitializeComponent() override;
 
-	
+	FOnAttackEndSignature OnAttackEnd;
 	
 	UPROPERTY(BlueprintReadOnly)
 	UClothingSystem* Clothing;
@@ -55,6 +58,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	USkeletalMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	AActor* AutoAimTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	class UProjectileType* UnarmedProjectile;
+
+	
+
+
+	void SetAutoAimTarget(AActor* t) {
+		AutoAimTarget = t;
+	}
 	
 	bool wantsToAttack() const {
 		return WantsToAttack;
@@ -71,11 +86,21 @@ public:
 
 	void ExecuteNextAttack(bool isHeavy);
 
-	
+	UFUNCTION()
+	void OnAttackMontageEnd(UAnimMontage* Montage, bool bInterrupted) {
+		if (Montage == LastPlayedAttackMontage) {
+			CanPlayNextAttack = true;
+			OnAttackEnd.ExecuteIfBound(this);
+		}
+	}
 
 	UAttackCombo* getCombo(FName id) const{
 		return Combos.FindRef(id, UnarmedCombo);
 	}
+
+	
+
+	void shootFromCharacterSocket(FName socket, class UProjectileType* overwriteProjectile = nullptr);
 
 
 
@@ -97,6 +122,11 @@ public:
 		if (CanPlayNextAttack || !isStillPlayingAttackAnim()) {
 			ExecuteNextAttack(false);
 		}
+	}
+	/*This is roughly equivalent to calling attackStart and then immediately calling attackEnd */
+	void performAttack(bool isPrimary, bool heavy) {
+		attackStart(isPrimary, heavy);
+		attackEnd(isPrimary, heavy);
 	}
 	UItemInstance* attackStart(bool isPrimary, bool heavy) {
 		UItemInstance* i = getEquippedInRightHand();
@@ -182,7 +212,7 @@ public:
 		attackSecondaryEnd(false);
 	}
 	bool isStillPlayingAttackAnim() {
-		return IsPlayingAnimMontage(LastPlayerAttackMontage);
+		return IsPlayingAnimMontage(LastPlayedAttackMontage);
 	}
 	inline bool IsPlayingAnimMontage(class UAnimMontage* AnimMontage) {
 		return getAnimInstance()->Montage_IsPlaying(AnimMontage);
@@ -196,6 +226,8 @@ public:
 	inline UAnimInstance* getAnimInstance() const {
 		return Mesh->GetAnimInstance();
 	}
+
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -204,7 +236,4 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
-	virtual void Attack(AActor* target = nullptr) {
-	}
 };

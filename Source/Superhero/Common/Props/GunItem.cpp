@@ -4,7 +4,6 @@
 #include "GunItem.h"
 #include "Common/Inventory/ItemInstance.h"
 #include "Common/Inventory/Inventory.h"
-#include "Common/Props/Actor/ItemActorProjectile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Common/Combat/CombatComponent.h"
 #include "Common/Character/Movement/AdvancedMovementComponent.h"
@@ -25,36 +24,22 @@ bool UGunItem::attackEnd(UItemInstance* instance, class UCombatComponent* combat
 void UGunItem::attackTrigger(UItemInstance* instance, class UCombatComponent* combat, bool isHeavy) const
 {
     Super::attackTrigger(instance, combat, isHeavy);
-    if (OnlyFireWhenAiming) {
-        if (!combat->IsAiming()) {
-            return;
+    if (IsValid(Projectile)) {
+        if (OnlyFireWhenAiming) {
+            if (!combat->IsAiming()) {
+                return;
+            }
         }
-    }
-    FTransform t;
-    if (BarrelTipSocket.IsValid()) {
-        
-        if (!instance->getSocketTransform(BarrelTipSocket, t)) {
-            return;
+        if (MakeNoise > 0) {
+            if (APawn* p = Cast<APawn>(instance->getActorOwner())) {
+                p->MakeNoise(MakeNoise,p,p->GetActorLocation());
+            }
         }
+        Projectile->shootFromItemSocket(BarrelTipSocket, instance);
     }
-    else if(UInventory * owner = instance->Owner){
-        t = owner->GetOwner()->GetActorTransform();
-    }
-    if (IsValid(instance->SceneComp)) {
-        if (IsValid(FireSound)) {
-            FVector loc = instance->SceneComp->GetComponentLocation();
-            UGameplayStatics::PlaySoundAtLocation(instance->SceneComp, FireSound, loc);
-        }
-    }
-    spawnProjectile(instance, isHeavy, t);
 }
 
-AActor* UGunItem::spawnProjectile(UItemInstance* instance, bool isHeavy, FTransform & trans) const
-{
-    AItemActorProjectile * p = AItemActorProjectile::spawn(instance->GetWorld(), instance, trans);
-    p->shoot(instance->Owner == nullptr ? nullptr : instance->Owner->GetOwner(), instance, ProjectileVelocity, ProjectileGravity);
-    return p;
-}
+
 
 bool UGunItem::attackStart(UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const
 {

@@ -11,14 +11,7 @@ void UFactions::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEve
 	{
 		const FName& PropertyName = PropertyChangedEvent.GetMemberPropertyName();
 
-		if (PropertyName == "Friends")
-		{
-			updateFriends();
-		}
-		if (PropertyName == "Enemies")
-		{
-			updateEnemies();
-		}
+		update();
 	}
 }
 #endif

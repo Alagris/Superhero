@@ -8,7 +8,10 @@
 #include <Common/Combat/CombatComponent.h>
 
 void UAnimNotify_NextAttackReady::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) {
-	if (UCombatComponent* combat = MeshComp->GetOwner()->GetComponentByClass<UCombatComponent>()) {
-		combat->OnNextAttackReady();
+	AActor* a = MeshComp->GetOwner();
+	if (IsValid(a)) {
+		if (UCombatComponent* combat = a->GetComponentByClass<UCombatComponent>()) {
+			combat->OnNextAttackReady();
+		}
 	}
 }

@@ -5,13 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include <Common/AI/AIControlableComponent.h>
+#include "ISpudObject.h"
+#include "GenericTeamAgentInterface.h"
 #include <Common/Interact/Hittable.h>
 #include <Common/Inventory/Health.h>
 #include "BasicAICharacter.generated.h"
 
 
 UCLASS()
-class SUPERHERO_API ABasicAICharacter : public ACharacter, public IHittable
+class SUPERHERO_API ABasicAICharacter : public ACharacter, public IHittable, public ISpudObject, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -34,9 +36,22 @@ public:
 	UAIControlableComponent* AI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	class UAIPerceptionComponent* Perception;
+	
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	//UAISenseConfig_Sight* SightConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UHealth* Health;
 
 	virtual void OnHit_Implementation(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) override {
 		Health->ReceiveHit(projectile, shooter, rangedWeapon, hitSpeed, NormalImpulse, Hit);
+		
+	}
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGenericTeamId TeamId = FGenericTeamId::NoTeam;
+
+	virtual FGenericTeamId GetGenericTeamId() const {
+		return TeamId;
 	}
 };

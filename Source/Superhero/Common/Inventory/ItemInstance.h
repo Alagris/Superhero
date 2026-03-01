@@ -39,6 +39,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	class USceneComponent* SceneComp;
 
+	AActor* getActorOwner() const;
 	bool getSocketTransform(FName socketName, FTransform & t) {
 		if (UStaticMeshComponent* sta = Cast<UStaticMeshComponent>(SceneComp)) {
 			t = sta->GetSocketTransform(socketName);

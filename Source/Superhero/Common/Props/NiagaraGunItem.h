@@ -17,22 +17,8 @@ class SUPERHERO_API UNiagaraGunItem : public UGunItem
 public:
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UNiagaraSystem* MuzzleFlash;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UNiagaraSystem* ImpactExplosion;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UNiagaraSystem* Trail;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool SimulatePhysics=false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool EnableGravity=false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float MaxSpeed=100000;
+	
 
 
-	virtual AActor* spawnProjectile(class UItemInstance* instance, bool isHeavy, FTransform& trans) const override;
+
 };

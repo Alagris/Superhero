@@ -3,7 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Common/Props/WeaponItem.h"
+#include "WeaponItem.h"
+#include "Projectiles/ProjectileType.h"
 #include "GunItem.generated.h"
 
 /**
@@ -15,21 +16,17 @@ class SUPERHERO_API UGunItem : public UWeaponItem
 	GENERATED_BODY()
 public:
 
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName BarrelTipSocket = "Tip";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USoundBase* FireSound;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	float ProjectileGravity=0;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FVector ProjectileVelocity = FVector(6000,0,0);
+	UProjectileType* Projectile;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool OnlyFireWhenAiming=false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float MakeNoise = 1;
 
 	virtual bool attackStart(class UItemInstance* instance, class UCombatComponent* combat, bool isPrimary, bool isHeavy) const;
 
@@ -37,5 +34,6 @@ public:
 
 	virtual void attackTrigger(class UItemInstance* instance, class UCombatComponent* combat, bool isHeavy) const override;
 
-	virtual AActor * spawnProjectile(class UItemInstance* instance, bool isHeavy, FTransform & trans) const;
+	
+	
 };

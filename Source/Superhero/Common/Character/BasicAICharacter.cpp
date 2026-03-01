@@ -4,7 +4,9 @@
 #include "Common/Character/BasicAICharacter.h"
 #include "Common/AI/BaseAIController.h"
 #include "Common/Character/Movement/AdvancedMovementComponent.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include <Perception/AISenseConfig_Sight.h>
 
 // Sets default values
 ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvancedMovementComponent>(CharacterMovementComponentName)) 
@@ -14,6 +16,9 @@ ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer
 
 	AI = CreateDefaultSubobject<UAIControlableComponent>(TEXT("AI"));
 	Health = CreateDefaultSubobject<UHealth>(TEXT("Health"));
+	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
+	
+
 	AIControllerClass = ABaseAIController::StaticClass();
 	UAdvancedMovementComponent* a = Cast<UAdvancedMovementComponent>(GetCharacterMovement());
 	a->setUseAccelerationForPathFollowing(true);

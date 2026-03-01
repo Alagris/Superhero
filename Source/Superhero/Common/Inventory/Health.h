@@ -7,7 +7,11 @@
 #include "Common/UI/Status/HealthBarWidget.h"
 #include "GameFramework/Character.h"
 #include "ISpudObject.h"
+#include <Perception/AISense_Damage.h>
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
 #include "ItemInstance.h"
 #include <Components/WidgetComponent.h>
 #include "Health.generated.h"
@@ -25,10 +29,12 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	//virtual void InitializeComponent() override;
+	virtual void InitializeComponent() override;
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+	UPROPERTY()
+	UAISense_Damage* DamageSense;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	float Health=100;
 
@@ -72,6 +78,11 @@ public:
 			a->GetCharacterMovement()->DisableMovement();
 			
 		}
+		if (UAIPerceptionComponent* perc = GetOwner()->GetComponentByClass<UAIPerceptionComponent>() ) {
+			perc->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
+			perc->SetSenseEnabled(UAISense_Hearing::StaticClass(), false);
+			
+		}
 		destroyHealthBar();
 	}
 	virtual void Revive() {
@@ -80,6 +91,11 @@ public:
 				a->GetMesh()->SetSimulatePhysics(false);
 				a->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 				
+			}
+			if (UAIPerceptionComponent* perc = GetOwner()->GetComponentByClass<UAIPerceptionComponent>()) {
+				perc->SetSenseEnabled(UAISense_Sight::StaticClass(), true);
+				perc->SetSenseEnabled(UAISense_Hearing::StaticClass(), true);
+
 			}
 			Health = MaxHealth;
 		}
@@ -125,12 +141,17 @@ public:
 			}else {
 				showHealthBar();
 			}
+			
 		}
 	}
 
 	virtual void ReceiveHit(class AActor* projectile, AActor* shooter, UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) {
 		if (!IsInvincible) {
-			damage(rangedWeapon->getDamageDealt(this, shooter, hitSpeed));
+			float dmg = rangedWeapon->getDamageDealt(this, shooter, hitSpeed);
+			if (IsValid(shooter)) {
+				UAISense_Damage::ReportDamageEvent(GetWorld(), GetOwner(), shooter, dmg, shooter->GetActorLocation(), Hit.Location);
+			}
+			damage(dmg);
 		}
 	}
 };

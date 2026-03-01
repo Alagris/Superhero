@@ -16,6 +16,11 @@ class SUPERHERO_API AEnemyAICharacter : public ABasicAICharacter
 public:
 	AEnemyAICharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	UCombatComponent* Combat;
+
+
+	
 };

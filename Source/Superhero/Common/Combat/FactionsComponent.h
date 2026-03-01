@@ -31,5 +31,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+
+	ETeamAttitude::Type getAttitude(UFaction* other) {
+		if (IsValid(Factions)) {
+			return Factions->getAttitude(Faction, other);
+		}
+		return ETeamAttitude::Neutral;
+	}
 };

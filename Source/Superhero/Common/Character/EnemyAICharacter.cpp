@@ -7,3 +7,4 @@
 AEnemyAICharacter::AEnemyAICharacter(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer) {
 	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat"));
 }
+

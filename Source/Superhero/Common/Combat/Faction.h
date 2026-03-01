@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "GenericTeamAgentInterface.h"
 #include "Faction.generated.h"
 
 /**
@@ -17,10 +18,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText Name;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<UFaction*> Friends;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGenericTeamId TeamId = FGenericTeamId::NoTeam;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<UFaction*> Enemies;
+	int FactionIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UFactions * Owner;
 	
 };

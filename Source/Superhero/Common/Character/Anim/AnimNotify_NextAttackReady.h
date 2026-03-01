@@ -15,4 +15,8 @@ class SUPERHERO_API UAnimNotify_NextAttackReady : public UAnimNotify
 	GENERATED_BODY()
 	
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
+
+public:
+	//UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	//* AttackAnim;
 };

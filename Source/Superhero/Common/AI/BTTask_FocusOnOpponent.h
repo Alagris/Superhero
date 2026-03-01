@@ -4,27 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_Attack.generated.h"
+#include "AIController.h"
+#include "BTTask_FocusOnOpponent.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API UBTTask_Attack : public UBTTask_BlackboardBase
+class SUPERHERO_API UBTTask_FocusOnOpponent : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
-
-	UPROPERTY()
-	UBehaviorTreeComponent* OwnerBT=nullptr;
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool Focus = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool IsPrimary=true;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	bool IsHeavy=false;
-
-	void OnAttackEnd(class UCombatComponent* combat);
+	uint8 Priority = EAIFocusPriority::Gameplay;
 };
