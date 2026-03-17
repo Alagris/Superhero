@@ -42,13 +42,7 @@ public class Superhero : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"Superhero",
-			"Superhero/Variant_Strategy",
-			"Superhero/Variant_Strategy/UI",
-			"Superhero/Variant_TwinStick",
-			"Superhero/Variant_TwinStick/AI",
-			"Superhero/Variant_TwinStick/Gameplay",
-			"Superhero/Variant_TwinStick/UI"
+			"Superhero"
 		});
 
         OptimizeCode = CodeOptimization.Never;

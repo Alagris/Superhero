@@ -16,7 +16,7 @@ ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer
 
 	AI = CreateDefaultSubobject<UAIControlableComponent>(TEXT("AI"));
 	Health = CreateDefaultSubobject<UHealth>(TEXT("Health"));
-	Perception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception"));
+	
 	
 
 	AIControllerClass = ABaseAIController::StaticClass();

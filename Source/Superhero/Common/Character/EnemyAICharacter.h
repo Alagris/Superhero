@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Common/Character/BasicAICharacter.h"
+#include "Common/Combat/HasFactions.h"
 #include "EnemyAICharacter.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SUPERHERO_API AEnemyAICharacter : public ABasicAICharacter
+class SUPERHERO_API AEnemyAICharacter : public ABasicAICharacter, public IHasFactions
 {
 	GENERATED_BODY()
 public:
@@ -22,5 +23,7 @@ public:
 	UCombatComponent* Combat;
 
 
-	
+	virtual UFactionsComponent* getFactionsComponent() const override {
+		return (UFactionsComponent*)Combat;
+	}
 };

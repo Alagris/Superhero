@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "AttackCombo.h"
 #include "ISpudObject.h"
+#include "FactionsComponent.h"
 #include <Common/Inventory/ClothingSystem.h>
 #include <Common/Character/Movement/AdvancedMovementComponent.h>
 #include "CombatComponent.generated.h"
@@ -16,7 +17,7 @@ DECLARE_DELEGATE_OneParam(FOnAttackEndSignature, class UCombatComponent * /* com
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SUPERHERO_API UCombatComponent : public UActorComponent, public ISpudObject
+class SUPERHERO_API UCombatComponent : public UFactionsComponent
 {
 	GENERATED_BODY()
 

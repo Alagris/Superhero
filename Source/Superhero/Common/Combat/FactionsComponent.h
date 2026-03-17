@@ -23,6 +23,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	UFaction* Faction;
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

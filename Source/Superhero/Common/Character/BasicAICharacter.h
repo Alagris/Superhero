@@ -35,8 +35,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UAIControlableComponent* AI;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
-	class UAIPerceptionComponent* Perception;
 	
 	//UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	//UAISenseConfig_Sight* SightConfig;

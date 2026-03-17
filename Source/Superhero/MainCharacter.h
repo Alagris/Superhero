@@ -10,6 +10,7 @@
 #include <Common/Interact/Hittable.h>
 #include <Common/Inventory/Health.h>
 #include <Common/Combat/CombatComponent.h>
+#include <Common/Combat/HasFactions.h>
 #include "MainCharacter.generated.h"
 
 
@@ -18,7 +19,7 @@
  * 
  */
 UCLASS()
-class SUPERHERO_API AMainCharacter : public AThirdPersonCharacter, public ISpudObject, public IHittable
+class SUPERHERO_API AMainCharacter : public AThirdPersonCharacter, public ISpudObject, public IHittable, public IHasFactions
 {
 	GENERATED_BODY()
 public:
@@ -42,6 +43,11 @@ public:
 
 	virtual void OnHit_Implementation(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) {
 		Health->ReceiveHit(projectile, shooter, rangedWeapon, hitSpeed, NormalImpulse, Hit);
+	}
+
+
+	virtual UFactionsComponent* getFactionsComponent() const override {
+		return Combat;
 	}
 
 };

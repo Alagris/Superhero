@@ -32,8 +32,7 @@ protected:
 	virtual void InitializeComponent() override;
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	UPROPERTY()
-	UAISense_Damage* DamageSense;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
 	float Health=100;
