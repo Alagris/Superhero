@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Common/UI/Status/HealthBarWidget.h"
 #include "GameFramework/Character.h"
 #include "ISpudObject.h"
@@ -75,7 +76,8 @@ public:
 			USkeletalMeshComponent * c = a->GetMesh();
 			c->SetSimulatePhysics(true);
 			a->GetCharacterMovement()->DisableMovement();
-			
+			UCapsuleComponent * caps = a->GetCapsuleComponent();
+			caps->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 		if (UAIPerceptionComponent* perc = GetOwner()->GetComponentByClass<UAIPerceptionComponent>() ) {
 			perc->SetSenseEnabled(UAISense_Sight::StaticClass(), false);
@@ -89,7 +91,8 @@ public:
 			if (ACharacter* a = Cast<ACharacter>(GetOwner())) {
 				a->GetMesh()->SetSimulatePhysics(false);
 				a->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-				
+				UCapsuleComponent* c = a->GetCapsuleComponent();
+				c->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			}
 			if (UAIPerceptionComponent* perc = GetOwner()->GetComponentByClass<UAIPerceptionComponent>()) {
 				perc->SetSenseEnabled(UAISense_Sight::StaticClass(), true);

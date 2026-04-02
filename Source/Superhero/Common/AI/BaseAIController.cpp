@@ -20,37 +20,12 @@ void ABaseAIController::OnPossess(APawn* pawn)
 			RunBehaviorTree(bt);
 		}
 	}
-	Faction = nullptr;
 	FactionComponent = pawn->GetComponentByClass<UFactionsComponent>();
-	if (FactionComponent) {
-		Faction = FactionComponent->Faction;
-		CombatComponent = Cast<UCombatComponent>(FactionComponent);
-		if (CombatComponent) {
-			ClothingComponent = CombatComponent->Clothing;
-		}
-	}
-	else {
-		CombatComponent = nullptr;
-	}
-	if(CombatComponent==nullptr){
-		ClothingComponent = pawn->GetComponentByClass<UClothingSystem>();
-	}
-	HealthComponent = pawn->GetComponentByClass<UHealth>();
-
-	if (IsValid(Faction)) {
-		if (ABasicAICharacter* aic = Cast<ABasicAICharacter>(pawn)) {
-			aic->TeamId = Faction->TeamId;
-		}
-	}
 }
 
 void ABaseAIController::OnUnPossess()
 {	
-	Faction = nullptr;
 	FactionComponent = nullptr;
-	HealthComponent = nullptr;
-	CombatComponent = nullptr;
-	ClothingComponent = nullptr;
 }
 
 ABaseAIController::ABaseAIController()
@@ -86,10 +61,10 @@ ABaseAIController::ABaseAIController()
 }
 
 ETeamAttitude::Type ABaseAIController::GetTeamAttitudeTowards(const AActor& Other) const {
-	if (IsValid(Faction)) {
+	if (IsValid(FactionComponent)) {
 		if (const IHasFactions* hasFactions = Cast<IHasFactions>(&Other)) {
 			if (UFactionsComponent* factionsComponent = hasFactions->getFactionsComponent()) {
-				return factionsComponent->getAttitude(Faction);
+				return factionsComponent->getAttitude(FactionComponent);
 			}
 		}
 	}
@@ -98,10 +73,10 @@ ETeamAttitude::Type ABaseAIController::GetTeamAttitudeTowards(const AActor& Othe
 
 void ABaseAIController::onActorPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (IsValid(Faction)) {
+	if (IsValid(FactionComponent)) {
 		if (IHasFactions* hasFactions = Cast<IHasFactions>(Actor)) {
 			if (UFactionsComponent* factionsComponent = hasFactions->getFactionsComponent()) {
-				ETeamAttitude::Type att = factionsComponent->getAttitude(Faction);
+				ETeamAttitude::Type att = factionsComponent->getAttitude(FactionComponent);
 				if (Stimulus.Type==SightConfig->GetSenseID()) {
 					OnSight(att, factionsComponent, Stimulus);
 				}else if (Stimulus.Type == HearingConfig->GetSenseID()) {

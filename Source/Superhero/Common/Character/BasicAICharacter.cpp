@@ -6,8 +6,9 @@
 #include "Common/Character/Movement/AdvancedMovementComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include <Perception/AISenseConfig_Sight.h>
 
+
+FName ABasicAICharacter::FactionsComponentName(TEXT("FactionsComp"));
 // Sets default values
 ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer.SetDefaultSubobjectClass<UAdvancedMovementComponent>(CharacterMovementComponentName)) 
 {
@@ -16,7 +17,7 @@ ABasicAICharacter::ABasicAICharacter(const FObjectInitializer& ObjectInitializer
 
 	AI = CreateDefaultSubobject<UAIControlableComponent>(TEXT("AI"));
 	Health = CreateDefaultSubobject<UHealth>(TEXT("Health"));
-	
+	Factions = CreateDefaultSubobject<UFactionsComponent>(FactionsComponentName);
 	
 
 	AIControllerClass = ABaseAIController::StaticClass();

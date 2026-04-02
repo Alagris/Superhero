@@ -19,10 +19,10 @@ public:
 	UFactionsComponent();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	UFactions* Factions;
+	UFactions* Factions = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, SaveGame)
-	UFaction* Faction;
+	UFaction* Faction = nullptr;
 
 
 protected:
@@ -30,6 +30,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
+
+	UPROPERTY(BlueprintReadOnly)
+	class UHealth* HealthComponent=nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	class UCombatComponent* CombatComponent = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	class UClothingSystem* ClothingComponent = nullptr;
+
+	UPROPERTY(BlueprintReadOnly)
+	class UInventory* InventoryComponent = nullptr;
+
+	UPROPERTY()
+	FGenericTeamId TeamId;
+
+	virtual void InitializeComponent() override;
+
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -39,5 +57,11 @@ public:
 			return Factions->getAttitude(Faction, other);
 		}
 		return ETeamAttitude::Neutral;
+	}
+	ETeamAttitude::Type getAttitude(UFactionsComponent* other) {
+		return getAttitude(other->Faction);
+	}
+	inline FGenericTeamId getTeamId() const {
+		return TeamId;
 	}
 };

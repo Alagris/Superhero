@@ -10,6 +10,7 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include <Common/Combat/CombatComponent.h>
 #include "Perception/AIPerceptionTypes.h"
+#include "ISpudObject.h"
 #include <Common/Inventory/Health.h>
 #include "BaseAIController.generated.h"
 
@@ -18,29 +19,36 @@
  * 
  */
 UCLASS()
-class SUPERHERO_API ABaseAIController : public AAIController
+class SUPERHERO_API ABaseAIController : public AAIController, public ISpudObject
 {
 	GENERATED_BODY()
 	virtual void OnPossess(APawn* pawn) override;
 
 	virtual void OnUnPossess() override;
-
-	ABaseAIController();
 public:
-	UPROPERTY(BlueprintReadOnly)
-	class UFaction* Faction;
+	ABaseAIController();
+
+	
 
 	UPROPERTY(BlueprintReadOnly)
 	UFactionsComponent* FactionComponent;
 
-	UPROPERTY(BlueprintReadOnly)
-	UHealth* HealthComponent;
+	
+	inline class UHealth* getHealthComponent() const{
+		return FactionComponent->HealthComponent;
+	}
+	
+	inline class UCombatComponent* getCombatComponent() const {
+		return FactionComponent->CombatComponent;
+	}
 
-	UPROPERTY(BlueprintReadOnly)
-	UCombatComponent* CombatComponent;
+	inline class UClothingSystem* getClothingComponent() const {
+		return FactionComponent->ClothingComponent;
+	}
 
-	UPROPERTY(BlueprintReadOnly)
-	UClothingSystem* ClothingComponent;
+	inline class UFaction* getFaction() const {
+		return FactionComponent->Faction;
+	}
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	class UAIPerceptionComponent* Perception;

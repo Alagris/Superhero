@@ -5,13 +5,13 @@
 #include "Common/Props/Projectiles/ProjectileType.h"
 
 // Sets default values for this component's properties
-UCombatComponent::UCombatComponent()
+UCombatComponent::UCombatComponent() 
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	bWantsInitializeComponent = true;
-	// ...
+	CombatComponent = this;
 }
 
 void UCombatComponent::ExecuteNextAttack(bool isHeavy)
@@ -51,11 +51,14 @@ void UCombatComponent::shootFromCharacterSocket(FName socket, UProjectileType* o
 void UCombatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-	Clothing = GetOwner()->GetComponentByClass<UClothingSystem>();
+
 	Movement = GetOwner()->GetComponentByClass<UAdvancedMovementComponent>();
 	if (ACharacter* c = Cast<ACharacter>(GetOwner())) {
 		Mesh = c->GetMesh();
-		Mesh->GetAnimInstance()->OnMontageEnded.AddDynamic(this, &UCombatComponent::OnAttackMontageEnd);
+		UAnimInstance * i = Mesh->GetAnimInstance();
+		if (IsValid(i)) {
+			i->OnMontageEnded.AddDynamic(this, &UCombatComponent::OnAttackMontageEnd);
+		}
 	}
 	if (!IsValid(Mesh)) {
 		check(false);

@@ -4,7 +4,8 @@
 #include "EnemyAICharacter.h"
 #include "Common/Combat/CombatComponent.h"
 
-AEnemyAICharacter::AEnemyAICharacter(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer) {
-	Combat = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat"));
+AEnemyAICharacter::AEnemyAICharacter(const FObjectInitializer& ObjectInitializer):Super(ObjectInitializer.SetDefaultSubobjectClass<UCombatComponent>(FactionsComponentName)) {
+	Combat = Cast<UCombatComponent>(Factions);
+	
 }
 

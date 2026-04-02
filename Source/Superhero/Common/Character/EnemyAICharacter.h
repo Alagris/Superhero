@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class SUPERHERO_API AEnemyAICharacter : public ABasicAICharacter, public IHasFactions
+class SUPERHERO_API AEnemyAICharacter : public ABasicAICharacter
 {
 	GENERATED_BODY()
 public:
@@ -23,7 +23,4 @@ public:
 	UCombatComponent* Combat;
 
 
-	virtual UFactionsComponent* getFactionsComponent() const override {
-		return (UFactionsComponent*)Combat;
-	}
 };

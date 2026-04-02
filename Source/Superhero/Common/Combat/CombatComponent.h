@@ -35,8 +35,6 @@ public:
 
 	FOnAttackEndSignature OnAttackEnd;
 	
-	UPROPERTY(BlueprintReadOnly)
-	UClothingSystem* Clothing;
 	
 	UPROPERTY(BlueprintReadOnly)
 	UAdvancedMovementComponent * Movement;
@@ -172,14 +170,14 @@ public:
 		}
 	}
 	UItemInstance* getEquippedInLeftHand() {
-		if (IsValid(Clothing)) {
-			return Clothing->getEquippedInLeftHand();
+		if (IsValid(ClothingComponent)) {
+			return ClothingComponent->getEquippedInLeftHand();
 		}
 		return nullptr;
 	}
 	UItemInstance* getEquippedInRightHand() {
-		if (IsValid(Clothing)) {
-			return Clothing->getEquippedInRightHand();
+		if (IsValid(ClothingComponent)) {
+			return ClothingComponent->getEquippedInRightHand();
 		}
 		return nullptr;
 	}

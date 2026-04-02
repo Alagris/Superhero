@@ -8,12 +8,13 @@
 #include "ISpudObject.h"
 #include "GenericTeamAgentInterface.h"
 #include <Common/Interact/Hittable.h>
+#include <Common/Combat/HasFactions.h>
 #include <Common/Inventory/Health.h>
 #include "BasicAICharacter.generated.h"
 
 
-UCLASS()
-class SUPERHERO_API ABasicAICharacter : public ACharacter, public IHittable, public ISpudObject, public IGenericTeamAgentInterface
+UCLASS(MinimalAPI)
+class ABasicAICharacter : public ACharacter, public IHittable, public IHasFactions, public ISpudObject, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -21,6 +22,7 @@ public:
 	// Sets default values for this character's properties
 	ABasicAICharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
+	static SUPERHERO_API FName FactionsComponentName;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -42,14 +44,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
 	UHealth* Health;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, SaveGame)
+	UFactionsComponent* Factions;
+
+	virtual UFactionsComponent* getFactionsComponent() const override {
+		return Factions;
+	}
+
 	virtual void OnHit_Implementation(class AActor* projectile, AActor* shooter, class UItemInstance* rangedWeapon, float hitSpeed, FVector NormalImpulse, const FHitResult& Hit) override {
 		Health->ReceiveHit(projectile, shooter, rangedWeapon, hitSpeed, NormalImpulse, Hit);
 		
 	}
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FGenericTeamId TeamId = FGenericTeamId::NoTeam;
-
+	
 	virtual FGenericTeamId GetGenericTeamId() const {
-		return TeamId;
+		return Factions->getTeamId();
 	}
 };
